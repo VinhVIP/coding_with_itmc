@@ -1,11 +1,9 @@
 import 'package:coding_with_itmc/components/choice.dart';
+import 'package:coding_with_itmc/components/mark_down.dart';
 import 'package:coding_with_itmc/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:markdown_widget/config/style_config.dart';
-import 'package:markdown_widget/markdown_widget.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class PostPage extends StatefulWidget {
   final int categoryIndex, postIndex;
@@ -119,7 +117,7 @@ class PageLesson extends StatelessWidget {
           if (snapshot.hasData) {
             return Container(
               margin: EdgeInsets.only(left: 10, right: 10, top: 5),
-              child: _buildMarkDown(context, snapshot.data),
+              child: buildMarkdown(context, snapshot.data),
             );
           }
           return Center(
@@ -128,7 +126,7 @@ class PageLesson extends StatelessWidget {
             ),
           );
         } else {
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         }
       },
     );
@@ -137,83 +135,28 @@ class PageLesson extends StatelessWidget {
   Future<String> getFileContent(String path) async {
     return await rootBundle.loadString(path);
   }
-
-  void _openInWebView(BuildContext context, String url) async {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => WebViewContainer(url)));
-  }
-
-  Widget _buildMarkDown(context, data) {
-    return MarkdownWidget(
-      data: data,
-      styleConfig: StyleConfig(
-          pConfig: PConfig(
-            onLinkTap: (url) {
-              _openInWebView(context, url);
-            },
-            textStyle: TextStyle(
-              fontSize: 15,
-            ),
-          ),
-          markdownTheme: MarkdownTheme.lightTheme,
-          preConfig: PreConfig(language: 'cpp'),
-          imgBuilder: (String url, attributes) {
-            if (url.startsWith("resources:"))
-              return Image.asset(url.substring("resources:".length));
-            else
-              return Image.network(url);
-          }),
-    );
-  }
 }
 
 class PageChoice extends StatelessWidget {
   final int categoryIndex, postIndex;
-  String data = "Tôi là ai? | Vinh | Nam | Vỹ | Quân | 0";
+  String data = 'Tôi là ai? | Vinh | Nam | Vỹ | Quân | 0 || Tôi là ai? | Vux | Nam | Vỹ | Quân | 0';
 
-  PageChoice({Key key, this.categoryIndex, this.postIndex})
-      : super(key: key);
+//  ||
+//   Trái đất có hình gì?|Tròn|Cầu|Mặt phẳng|1 ||
+//   Tìm output của đoạn chương trình sau:
+//   ```#include <iostream>
+//   using namespace std;
+//   int main(){
+//       cout << 5;
+//   }
+//   ```
+//   |5|6|7|0
+//  ''';
 
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Choice(data),
-    );
-  }
-}
-
-class WebViewContainer extends StatefulWidget {
-  final url;
-
-  WebViewContainer(this.url);
-
-  @override
-  State<StatefulWidget> createState() {
-    return WebViewContainerState(url);
-  }
-}
-
-class WebViewContainerState extends State<WebViewContainer> {
-  var _url;
-  final _key = UniqueKey();
-
-  WebViewContainerState(this._url);
+  PageChoice({Key key, this.categoryIndex, this.postIndex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: WebView(
-              key: _key,
-              initialUrl: _url,
-              javascriptMode: JavascriptMode.unrestricted,
-            ),
-          )
-        ],
-      ),
-    );
+    return Choice(data);
   }
 }

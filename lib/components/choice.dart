@@ -1,145 +1,204 @@
+import 'package:coding_with_itmc/components/mark_down.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Choice extends StatelessWidget {
+class Choice extends StatefulWidget {
   String data;
 
-  List<String> answers = new List();
-  String question;
-  List<int> correct = new List();
+  Choice(this.data);
 
-  Choice(this.data) {
-    List<String> list = data.split('|');
+  @override
+  State<StatefulWidget> createState() {
+    return _ChoiceState(data);
+  }
+}
+
+class _ChoiceState extends State<Choice> with AutomaticKeepAliveClientMixin {
+  String data;
+
+  List<String> questions;
+  List<List<String>> answers;
+  List<List<int>> correct;
+
+  _ChoiceState(this.data) {
+    List<String> list = data.split('||');
     int size = list.length;
+    questions = new List(size);
+    answers = new List(size);
+    correct = new List(size);
 
-    assert(size >= 4);
-    question = list[0].trim();
-    for (int i = 1; i < size - 1; i++) {
-      answers.add(list[i].trim());
-    }
+    int len;
 
-    list[size - 1] = list[size - 1].trim();
-    assert(list[size - 1].length > 0);
-    for (int i = 0; i < list[size - 1].length; i++) {
-      correct.add(int.tryParse(list[size - 1][i]));
+    for (int q = 0; q < size; q++) {
+      answers[q] = new List();
+      correct[q] = new List();
+
+      List<String> ques = list[q].split('|'); // 1 câu trắc nghiệm
+      questions[q] = ques[0].trim(); // Thêm câu hỏi
+      len = ques.length;
+
+      // Thêm các phương án
+      for (int a = 1; a < len - 1; a++) {
+        answers[q].add(ques[a].trim());
+      }
+
+      // Thêm các đáp án đúng
+      ques[len - 1] = ques[len - 1].trim();
+      for (int c = 0; c < ques[len - 1].length; c++) {
+        correct[q].add(int.tryParse(ques[len - 1][c]));
+      }
     }
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Widget widget = (correct.length >= 2)
-        ? MultiChoice(answers, correct)
-        : SingleChoice(answers, correct[0]);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(question),
-        widget,
-      ],
+    super.build(context);
+
+    List<Widget> widgets = new List(questions.length);
+    for (int i = 0; i < widgets.length; i++) {
+//      widgets[i] = (correct[i].length >= 2)
+//          ? MultiChoice(questions[i], answers[i], correct[i])
+//          : SingleChoice(questions[i], answers[i], correct[i][0]);
+      widgets[i] = SingleChoice(questions[i], answers[i], correct[i][0]);
+    }
+    return DefaultTabController(
+      length: widgets.length,
+      child: Builder(
+        builder: (context) => Column(
+          children: <Widget>[
+            TabPageSelector(),
+            Expanded(
+              child: TabBarView(
+                children: widgets,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
 class SingleChoice extends StatefulWidget {
+  String question;
   List<String> answers;
   int correct;
 
-  SingleChoice(this.answers, this.correct);
+  SingleChoice(this.question, this.answers, this.correct);
 
   @override
   State<StatefulWidget> createState() {
-    return new _SingleChoice(answers, correct);
+    return new _SingleChoice(question, answers, correct);
   }
 }
 
-class _SingleChoice extends State<SingleChoice> {
+class _SingleChoice extends State<SingleChoice>
+    with AutomaticKeepAliveClientMixin {
+  String question;
   final List<String> answers;
-  List<RadioListTile> widgets = new List();
+  List<RadioListTile> widgets;
   final int correct;
   int _radioValue = -1;
 
-  _SingleChoice(this.answers, this.correct) {
+  _SingleChoice(this.question, this.answers, this.correct) {
+    widgets = new List(answers.length);
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
     for (int i = 0; i < answers.length; i++) {
-      widgets.add(RadioListTile(
+      widgets[i] = RadioListTile(
         title: Text(answers[i]),
         value: i,
         groupValue: _radioValue,
-        onChanged: (value){
-          print('click $value, radioValue $_radioValue');
+        onChanged: (value) {
           setState(() {
             _radioValue = value;
           });
         },
-      ));
+      );
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return Expanded(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: widgets,
+//        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          buildMarkdown(context, question),
+          Column(
+            children: widgets,
+          ),
+        ],
       ),
     );
   }
-
-//  void _handleRadioValueChange(int value) {
-//    print('click $value, radioValue $_radioValue');
-//    setState(() {
-//      _radioValue = value;
-//    });
-//  }
 }
-
+/*
 class MultiChoice extends StatefulWidget {
+  String question;
   List<String> answers;
   List<int> correct;
 
-  MultiChoice(this.answers, this.correct);
+  MultiChoice(this.question, this.answers, this.correct);
 
   @override
   State<StatefulWidget> createState() {
-    return _MultiChoiceState(answers, correct);
+    return _MultiChoiceState(question, answers, correct);
   }
 }
 
-class _MultiChoiceState extends State<MultiChoice> {
+class _MultiChoiceState extends State<MultiChoice>
+    with AutomaticKeepAliveClientMixin {
+  String question;
   final List<String> answers;
-  List<Widget> widgets = new List();
+  List<Widget> widgets;
   List<int> correct;
-  List<bool> _cbValue = new List();
+  List<bool> _cbValue;
 
-  _MultiChoiceState(this.answers, this.correct) {
-    for (int i = 0; i < answers.length; i++) {
-      _cbValue.add(false);
-      widgets.add(ListTile(
-        title: Text(answers[i]),
-        leading: Checkbox(
-          value: _cbValue[i],
-          onChanged: (bool value) {
-            _handleCheckBoxValueChange(value, i);
-          },
-        ),
-      ));
-    }
+  _MultiChoiceState(this.question, this.answers, this.correct) {
+    widgets = new List(answers.length);
+    _cbValue = new List.filled(answers.length, false);
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: widgets,
-      ),
+    super.build(context);
+
+    for (int i = 0; i < answers.length; i++) {
+      widgets[i] = ListTile(
+        title: buildMarkdown(context, answers[i]),
+        leading: Checkbox(
+          value: _cbValue[i],
+          onChanged: (bool value) {
+            setState(() {
+              _cbValue[i] = value;
+            });
+          },
+        ),
+      );
+    }
+    return Column(
+      children: <Widget>[
+        buildMarkdown(context, question),
+        Column(
+          children: widgets,
+        ),
+      ],
     );
   }
-
-  _handleCheckBoxValueChange(bool value, int index) {
-    setState(() {
-      _cbValue[index] = value;
-    });
-  }
 }
+*/
