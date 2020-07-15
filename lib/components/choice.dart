@@ -1,4 +1,3 @@
-import 'package:coding_with_itmc/components/mark_down.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -64,10 +63,9 @@ class _ChoiceState extends State<Choice> with AutomaticKeepAliveClientMixin {
 
     List<Widget> widgets = new List(questions.length);
     for (int i = 0; i < widgets.length; i++) {
-//      widgets[i] = (correct[i].length >= 2)
-//          ? MultiChoice(questions[i], answers[i], correct[i])
-//          : SingleChoice(questions[i], answers[i], correct[i][0]);
-      widgets[i] = SingleChoice(questions[i], answers[i], correct[i][0]);
+      widgets[i] = (correct[i].length >= 2)
+          ? MultiChoice(questions[i], answers[i], correct[i])
+          : SingleChoice(questions[i], answers[i], correct[i][0]);
     }
     return DefaultTabController(
       length: widgets.length,
@@ -79,7 +77,7 @@ class _ChoiceState extends State<Choice> with AutomaticKeepAliveClientMixin {
               child: TabBarView(
                 children: widgets,
               ),
-            ),
+            )
           ],
         ),
       ),
@@ -104,9 +102,12 @@ class _SingleChoice extends State<SingleChoice>
     with AutomaticKeepAliveClientMixin {
   String question;
   final List<String> answers;
-  List<RadioListTile> widgets;
+  List<Widget> widgets;
   final int correct;
   int _radioValue = -1;
+
+  String mess;
+  Color messColor;
 
   _SingleChoice(this.question, this.answers, this.correct) {
     widgets = new List(answers.length);
@@ -127,24 +128,64 @@ class _SingleChoice extends State<SingleChoice>
         onChanged: (value) {
           setState(() {
             _radioValue = value;
+            mess = null;
           });
         },
       );
     }
-    return Expanded(
+
+    return SingleChildScrollView(
       child: Column(
-//        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          buildMarkdown(context, question),
-          Column(
-            children: widgets,
-          ),
-        ],
-      ),
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Text(
+                question,
+                style: TextStyle(fontSize: 15),
+              ),
+            ),
+            Column(
+              children: widgets,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text(
+                mess == null ? '' : mess,
+                style: TextStyle(
+                    color: messColor,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Center(
+              child: RaisedButton(
+                color: Colors.blue,
+                textColor: Colors.white,
+                onPressed: () {
+                  _checkResult();
+                },
+                child: Text('Kiểm tra'),
+              ),
+            ),
+          ]),
     );
   }
+
+  _checkResult() {
+    setState(() {
+      if (_radioValue == correct) {
+        messColor = Colors.green;
+        mess = 'Đáp án chính xác';
+      } else {
+        messColor = Colors.red;
+        mess = 'Đáp án không chính xác';
+      }
+    });
+  }
 }
-/*
+
 class MultiChoice extends StatefulWidget {
   String question;
   List<String> answers;
@@ -163,12 +204,18 @@ class _MultiChoiceState extends State<MultiChoice>
   String question;
   final List<String> answers;
   List<Widget> widgets;
-  List<int> correct;
+  List<bool> correct;
   List<bool> _cbValue;
+  String mess;
+  Color messColor;
 
-  _MultiChoiceState(this.question, this.answers, this.correct) {
+  _MultiChoiceState(this.question, this.answers, List<int> intCorrect) {
     widgets = new List(answers.length);
     _cbValue = new List.filled(answers.length, false);
+    correct = new List.filled(answers.length, false);
+    for (int i = 0; i < intCorrect.length; i++) {
+      correct[intCorrect[i]] = true;
+    }
   }
 
   @override
@@ -180,25 +227,68 @@ class _MultiChoiceState extends State<MultiChoice>
 
     for (int i = 0; i < answers.length; i++) {
       widgets[i] = ListTile(
-        title: buildMarkdown(context, answers[i]),
+        title: Text(
+          answers[i],
+          style: TextStyle(fontSize: 15),
+        ),
         leading: Checkbox(
           value: _cbValue[i],
           onChanged: (bool value) {
             setState(() {
               _cbValue[i] = value;
+              mess = null;
             });
           },
         ),
       );
     }
-    return Column(
-      children: <Widget>[
-        buildMarkdown(context, question),
-        Column(
-          children: widgets,
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Text(question),
+            ),
+            Column(
+              children: widgets,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text(
+                mess == null ? '' : mess,
+                style: TextStyle(
+                    color: messColor,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Center(
+              child: RaisedButton(
+                color: Colors.blue,
+                textColor: Colors.white,
+                onPressed: () {
+                  _checkResult();
+                },
+                child: Text('Kiểm tra'),
+              ),
+            ),
+          ]),
     );
   }
+
+  _checkResult() {
+    setState(() {
+      for (int i = 0; i < _cbValue.length; i++) {
+        if (_cbValue[i] != correct[i]) {
+          messColor = Colors.red;
+          mess = 'Đáp án không chính xác';
+          return;
+        }
+      }
+      messColor = Colors.green;
+      mess = 'Đáp án chính xác';
+    });
+  }
 }
-*/

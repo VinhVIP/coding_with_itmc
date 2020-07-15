@@ -3,28 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
 Widget buildMarkdown(BuildContext context, String data) {
-  return SizedBox(
-    height: 200,
-    child: MarkdownWidget(
-      data: data,
-      styleConfig: StyleConfig(
-          pConfig: PConfig(
-            onLinkTap: (url) {
-              _openInWebView(context, url);
-            },
-            textStyle: TextStyle(
-              fontSize: 15,
-            ),
+  return MarkdownWidget(
+    data: data,
+    styleConfig: StyleConfig(
+        pConfig: PConfig(
+          onLinkTap: (url) {
+            _openInWebView(context, url);
+          },
+          textStyle: TextStyle(
+            fontSize: 15,
           ),
-          markdownTheme: MarkdownTheme.lightTheme,
-          preConfig: PreConfig(language: 'cpp'),
-          imgBuilder: (String url, attributes) {
-            if (url.startsWith("resources:"))
-              return Image.asset(url.substring("resources:".length));
-            else
-              return Image.network(url);
-          }),
-    ),
+        ),
+        markdownTheme: MarkdownTheme.lightTheme,
+        preConfig: PreConfig(language: 'cpp'),
+        imgBuilder: (String url, attributes) {
+          if (url.startsWith("resources:"))
+            return Image.asset(url.substring("resources:".length));
+          else
+            return Image.network(url);
+        }),
   );
 }
 

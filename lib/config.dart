@@ -9,20 +9,20 @@ import 'models/post.dart';
 //MaterialColor kCardHighlightColor = Colors.blue[50]; //blue 50
 
 final List<Category> listCategories = [
-  Category(Image.asset('assets/images/cpp_beginner.png'), 'C++ cơ bản', 0),
-  Category(Image.asset('assets/images/java.jpg'), 'Java cơ bản', 0),
+  Category(Image.asset('assets/images/cpp_beginner.png'), 'C++ cơ bản', 2),
+  Category(Image.asset('assets/images/java.jpg'), 'Java cơ bản', 2),
 ];
 
 final List<Post> listPostCppBeginner = [
   Post(
-      'Hello World! Chương trình đầu tiên', 'assets/data/posts/cpp_beginner/bai1.md'),
-  Post('Các kiểu biến dữ liệu trong C++', 'assets/data/posts/cpp_beginner/bai2.md'),
+      'Hello World! Chương trình đầu tiên', 'assets/data/posts/cpp_beginner/bai1.md', 'assets/data/posts/cpp_beginner/bai1_tn.md'),
+  Post('Các kiểu biến dữ liệu trong C++', 'assets/data/posts/cpp_beginner/bai2.md', 'assets/data/posts/cpp_beginner/bai2_tn.md'),
 ];
 
 final List<Post> listPostJava = [
   Post(
-      'Hello World! Chương trình đầu tiên', 'assets/data/cpp_beginner/bai1.md'),
-  Post('Các kiểu biến dữ liệu trong Java', 'assets/data/cpp_beginner/bai2.md'),
+      'Hello World! Chương trình đầu tiên', 'assets/data/cpp_beginner/bai1.md', 'assets/data/posts/cpp_beginner/bai2_tn.md'),
+  Post('Các kiểu biến dữ liệu trong Java', 'assets/data/cpp_beginner/bai2.md', 'assets/data/posts/cpp_beginner/bai2_tn.md'),
 ];
 
 Map<int, List<Post>> listPosts = new Map();

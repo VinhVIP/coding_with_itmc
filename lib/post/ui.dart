@@ -111,7 +111,7 @@ class PageLesson extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: getFileContent(listPosts[categoryIndex][postIndex].path),
+      future: getFileContent(listPosts[categoryIndex][postIndex].pathLesson),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
@@ -139,24 +139,26 @@ class PageLesson extends StatelessWidget {
 
 class PageChoice extends StatelessWidget {
   final int categoryIndex, postIndex;
-  String data = 'Tôi là ai? | Vinh | Nam | Vỹ | Quân | 0 || Tôi là ai? | Vux | Nam | Vỹ | Quân | 0';
-
-//  ||
-//   Trái đất có hình gì?|Tròn|Cầu|Mặt phẳng|1 ||
-//   Tìm output của đoạn chương trình sau:
-//   ```#include <iostream>
-//   using namespace std;
-//   int main(){
-//       cout << 5;
-//   }
-//   ```
-//   |5|6|7|0
-//  ''';
 
   PageChoice({Key key, this.categoryIndex, this.postIndex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Choice(data);
+    return FutureBuilder<String>(
+      future: getFileChoiceContent(listPosts[categoryIndex][postIndex].pathChoice),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot){
+        if(snapshot.connectionState == ConnectionState.done){
+          if(snapshot.hasData){
+            return Choice(snapshot.data);
+          }
+          return Center(child: Text('Không có câu hỏi trắc nghiệm!'),);
+        }
+        return Center(child: CircularProgressIndicator(),);
+      },
+    );
+  }
+
+  Future<String> getFileChoiceContent(String path) async {
+    return await rootBundle.loadString(path);
   }
 }

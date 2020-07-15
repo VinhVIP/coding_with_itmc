@@ -54,7 +54,7 @@ flutter:
     - assets/images/cpp_beginner.png
     - assets/images/java.jpg
 
-    - assets/data/posts/cpp_beginner/bai1.md
+    - assets/data/posts/cpp_beginner/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
