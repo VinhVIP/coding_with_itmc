@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../config.dart';
 
 class HomePage extends StatelessWidget {
-
   HomePage() {
     InitData initData = new InitData();
     initData.loadData();
@@ -15,7 +14,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:  Colors.grey[50],
+      backgroundColor: Colors.grey[50],
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: AppBar(
@@ -94,7 +93,8 @@ class ListCategories extends StatelessWidget {
             ),
           ),
           title: Text(listCategories[index].title),
-          subtitle: Text(listCategories[index].numPosts.toString()),
+          subtitle:
+              Text(listCategories[index].numPosts.toString() + " bài học"),
         ),
       ),
     );
