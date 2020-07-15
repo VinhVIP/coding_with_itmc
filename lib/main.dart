@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'splashscreen.dart';
 
 void main() {
-  SystemChrome.setEnabledSystemUIOverlays([]);
+//  SystemChrome.setEnabledSystemUIOverlays ([SystemUiOverlay.bottom]);
   runApp(MyApp());
 }
 

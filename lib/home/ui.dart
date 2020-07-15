@@ -14,11 +14,11 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: kBackgroundColor,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: AppBar(
-          backgroundColor: Colors.blue[800],
+          backgroundColor: kPrimaryColor,
           title: Text('iTMC',
               style: GoogleFonts.galada(fontSize: 23, letterSpacing: 2.5)),
           elevation: 4,
@@ -47,14 +47,24 @@ class HomePage extends StatelessWidget {
           Expanded(child: ListCategories()),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            ListTile(
-              title: Text('Setting'),
-            )
-          ],
-        ),
+      drawer: _buildDrawer(),
+    );
+  }
+
+  _buildDrawer() {
+    return Drawer(
+      elevation: 1.0,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            padding: EdgeInsets.all(0),
+            child: Container(
+              color: kPrimaryColor,
+              child: Image.asset('assets/images/itmc.png'),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -79,7 +89,7 @@ class ListCategories extends StatelessWidget {
       elevation: 5,
       child: InkWell(
         borderRadius: BorderRadius.circular(25),
-        splashColor: Colors.blue[50],
+        splashColor: kCardHighlightColor,
         onTap: () {
           _moveToCategory(context, index);
         },
@@ -89,7 +99,7 @@ class ListCategories extends StatelessWidget {
             height: 50,
             child: CircleAvatar(
               child: listCategories[index].icon,
-              backgroundColor: Colors.blue[100],
+              backgroundColor: Colors.blue[50],
             ),
           ),
           title: Text(listCategories[index].title),

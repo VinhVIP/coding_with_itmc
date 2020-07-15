@@ -1,6 +1,6 @@
 import 'package:coding_with_itmc/config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 import 'home/ui.dart';
@@ -15,21 +15,19 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+//    SystemChrome.setEnabledSystemUIOverlays ([SystemUiOverlay.bottom]);
     return new SplashScreen(
-      seconds: 5,
+      seconds: 3,
       navigateAfterSeconds: HomePage(),
       title: Text(
-        "Coding With ITMC",
-        style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.blueAccent),
+        'Coding with iTMC',
+        style: GoogleFonts.galada(
+            fontSize: 23, letterSpacing: 2.5, color: Colors.white70),
       ),
       image: Image.asset("assets/images/itmc.png"),
       photoSize: 150,
-      backgroundColor:  Colors.grey[50],
-      loaderColor: Colors.blueAccent,
+      backgroundColor: kPrimaryColor,
+      loaderColor: Colors.white70,
       onClick: () {},
     );
   }

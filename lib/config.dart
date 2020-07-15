@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'models/category.dart';
 import 'models/post.dart';
 
-//MaterialColor kPrimaryColor = Colors.blue[800];  //blue 800
-//MaterialColor kBackgroundColor = Colors.grey[50]; //grey 50
-//MaterialColor kCardColor = Colors.white54;   //white 54
-//MaterialColor kCardHighlightColor = Colors.blue[50]; //blue 50
+Color kPrimaryColor = Colors.blue[900];  //blue 900
+Color kPrimaryLightColor = Colors.blue[800];  //blue 800
+Color kBackgroundColor = Colors.grey[200]; //grey 200
+Color kCardColor = Colors.white54;   //white 54
+Color kCardHighlightColor = Colors.blue[50]; //blue 50
 
 final List<Category> listCategories = [
   Category(Image.asset('assets/images/cpp_beginner.png'), 'C++ cơ bản', 2),

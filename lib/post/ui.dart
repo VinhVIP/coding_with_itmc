@@ -59,7 +59,7 @@ class _PostPageState extends State<PostPage> {
     return PreferredSize(
       preferredSize: Size.fromHeight(80),
       child: AppBar(
-        backgroundColor: Colors.blue[800],
+        backgroundColor: kPrimaryColor,
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
@@ -92,7 +92,7 @@ class _PostPageState extends State<PostPage> {
       ],
       currentIndex: _currentTabIndex,
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.blue[800],
+      selectedItemColor: kPrimaryColor,
       onTap: (index) {
         setState(() {
           _currentTabIndex = index;

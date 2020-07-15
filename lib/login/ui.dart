@@ -1,5 +1,6 @@
 import 'package:coding_with_itmc/components/rounded_button.dart';
 import 'package:coding_with_itmc/components/rounded_text_field.dart';
+import 'package:coding_with_itmc/config.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: AppBar(
-          backgroundColor: Colors.blue[800],
+          backgroundColor: kPrimaryColor,
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),

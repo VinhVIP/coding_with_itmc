@@ -1,3 +1,4 @@
+import 'package:coding_with_itmc/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -161,7 +162,7 @@ class _SingleChoice extends State<SingleChoice>
             ),
             Center(
               child: RaisedButton(
-                color: Colors.blue,
+                color: kPrimaryLightColor,
                 textColor: Colors.white,
                 onPressed: () {
                   _checkResult();
@@ -266,7 +267,7 @@ class _MultiChoiceState extends State<MultiChoice>
             ),
             Center(
               child: RaisedButton(
-                color: Colors.blue,
+                color: kPrimaryLightColor,
                 textColor: Colors.white,
                 onPressed: () {
                   _checkResult();
