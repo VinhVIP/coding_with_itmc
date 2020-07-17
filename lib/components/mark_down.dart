@@ -1,4 +1,5 @@
 import 'package:coding_with_itmc/components/web_view.dart';
+import 'package:coding_with_itmc/config.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
@@ -12,9 +13,11 @@ Widget buildMarkdown(BuildContext context, String data) {
           },
           textStyle: TextStyle(
             fontSize: 15,
+            color: darkMode ? kTextDarkColor : kTextColor,
           ),
         ),
-        markdownTheme: MarkdownTheme.lightTheme,
+        markdownTheme:
+            darkMode ? MarkdownTheme.darkTheme : MarkdownTheme.lightTheme,
         preConfig: PreConfig(language: 'cpp'),
         imgBuilder: (String url, attributes) {
           if (url.startsWith("resources:"))

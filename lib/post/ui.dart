@@ -46,6 +46,7 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
       appBar: _buildAppBar(context),
       body: IndexedStack(
         index: _currentTabIndex,
@@ -57,7 +58,7 @@ class _PostPageState extends State<PostPage> {
 
   Widget _buildAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(80),
+      preferredSize: Size.fromHeight(70),
       child: AppBar(
         backgroundColor: kPrimaryColor,
         elevation: 4,
@@ -80,14 +81,35 @@ class _PostPageState extends State<PostPage> {
 
   Widget _buildBottomNavBar() {
     return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
+      backgroundColor: darkMode ? kCardDarkColor : kBackgroundColor,
+      items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.library_books),
-          title: Text('Lý thuyết'),
+          activeIcon: Icon(
+            Icons.library_books,
+            color: kTabActiveDarkColor,
+          ),
+          icon: Icon(
+            Icons.library_books,
+            color: darkMode ? kTabDarkColor : kTabColor,
+          ),
+          title: Text(
+            'Lý thuyết',
+            style: TextStyle(color: darkMode ? kTabDarkColor : kTabColor),
+          ),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.check_circle),
-          title: Text('Trắc nghiệm'),
+          activeIcon: Icon(
+            Icons.check_circle,
+            color: kTabActiveDarkColor,
+          ),
+          icon: Icon(
+            Icons.check_circle,
+            color: darkMode ? kTabDarkColor : kTabColor,
+          ),
+          title: Text(
+            'Trắc nghiệm',
+            style: TextStyle(color: darkMode ? kTabDarkColor : kTabColor),
+          ),
         ),
       ],
       currentIndex: _currentTabIndex,
@@ -123,6 +145,7 @@ class PageLesson extends StatelessWidget {
           return Center(
             child: Text(
               'Bài viết hiện chưa được cập nhật',
+              style: TextStyle(color: darkMode ? kTextDarkColor : kTextColor),
             ),
           );
         } else {
@@ -145,15 +168,23 @@ class PageChoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: getFileChoiceContent(listPosts[categoryIndex][postIndex].pathChoice),
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot){
-        if(snapshot.connectionState == ConnectionState.done){
-          if(snapshot.hasData){
+      future:
+          getFileChoiceContent(listPosts[categoryIndex][postIndex].pathChoice),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
             return Choice(snapshot.data);
           }
-          return Center(child: Text('Không có câu hỏi trắc nghiệm!'),);
+          return Center(
+            child: Text(
+              'Không có câu hỏi trắc nghiệm!',
+              style: TextStyle(color: darkMode ? kTextDarkColor : kTextColor),
+            ),
+          );
         }
-        return Center(child: CircularProgressIndicator(),);
+        return Center(
+          child: CircularProgressIndicator(),
+        );
       },
     );
   }

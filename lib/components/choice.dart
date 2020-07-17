@@ -1,5 +1,4 @@
 import 'package:coding_with_itmc/config.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Choice extends StatefulWidget {
@@ -122,16 +121,26 @@ class _SingleChoice extends State<SingleChoice>
     super.build(context);
 
     for (int i = 0; i < answers.length; i++) {
-      widgets[i] = RadioListTile(
-        title: Text(answers[i]),
-        value: i,
-        groupValue: _radioValue,
-        onChanged: (value) {
-          setState(() {
-            _radioValue = value;
-            mess = null;
-          });
-        },
+      widgets[i] = Theme(
+        data: ThemeData(
+          unselectedWidgetColor: Colors.blue,
+        ),
+        child: RadioListTile(
+          title: Text(
+            answers[i],
+            style: TextStyle(
+              color: darkMode ? kTextDarkColor : kTextColor,
+            ),
+          ),
+          value: i,
+          groupValue: _radioValue,
+          onChanged: (value) {
+            setState(() {
+              _radioValue = value;
+              mess = null;
+            });
+          },
+        ),
       );
     }
 
@@ -141,10 +150,14 @@ class _SingleChoice extends State<SingleChoice>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: Text(
                 question,
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(
+                  fontSize: 15,
+                  color: darkMode ? kTextDarkColor : kTextColor,
+                ),
               ),
             ),
             Column(
@@ -230,16 +243,22 @@ class _MultiChoiceState extends State<MultiChoice>
       widgets[i] = ListTile(
         title: Text(
           answers[i],
-          style: TextStyle(fontSize: 15),
+          style: TextStyle(
+              fontSize: 15, color: darkMode ? kTextDarkColor : kTextColor),
         ),
-        leading: Checkbox(
-          value: _cbValue[i],
-          onChanged: (bool value) {
-            setState(() {
-              _cbValue[i] = value;
-              mess = null;
-            });
-          },
+        leading: Theme(
+          data: ThemeData(
+            unselectedWidgetColor: Colors.blue,
+          ),
+          child: Checkbox(
+            value: _cbValue[i],
+            onChanged: (bool value) {
+              setState(() {
+                _cbValue[i] = value;
+                mess = null;
+              });
+            },
+          ),
         ),
       );
     }
@@ -249,8 +268,12 @@ class _MultiChoiceState extends State<MultiChoice>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: Text(question),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Text(
+                question,
+                style: TextStyle(color: darkMode ? kTextDarkColor : kTextColor),
+              ),
             ),
             Column(
               children: widgets,

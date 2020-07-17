@@ -12,7 +12,7 @@ class ListPostsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
+        preferredSize: Size.fromHeight(70),
         child: AppBar(
           backgroundColor: kPrimaryColor,
           elevation: 4,
@@ -31,7 +31,7 @@ class ListPostsPage extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: kBackgroundColor,
+      backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -61,12 +61,13 @@ class ListPosts extends StatelessWidget {
 
   Widget _rowItem(BuildContext context, int index) {
     return Card(
+      color: darkMode ? kCardDarkColor : kCardColor,
       margin: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       elevation: 5,
       child: InkWell(
         borderRadius: BorderRadius.circular(25),
-        splashColor: kCardHighlightColor,
+        splashColor: darkMode ? kCardHighlightDarkColor : kCardHighlightColor,
         onTap: () {
           Navigator.push(
               context,
@@ -85,7 +86,10 @@ class ListPosts extends StatelessWidget {
               backgroundColor: kPrimaryLightColor,
             ),
           ),
-          title: Text(listPosts[categoryIndex][index].title),
+          title: Text(
+            listPosts[categoryIndex][index].title,
+            style: TextStyle(color: darkMode ? kTextDarkColor : kTextColor),
+          ),
         ),
       ),
     );
