@@ -1,9 +1,9 @@
 import 'package:coding_with_itmc/categories/ui.dart';
+import 'package:coding_with_itmc/components/appbar.dart';
 import 'package:coding_with_itmc/lib/shared_preference.dart';
-import 'package:coding_with_itmc/login/ui.dart';
+import 'package:coding_with_itmc/login/login_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../config.dart';
 
@@ -24,29 +24,7 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70),
-        child: AppBar(
-          backgroundColor: kPrimaryColor,
-          title: Text('iTMC',
-              style: GoogleFonts.galada(fontSize: 23, letterSpacing: 2.5)),
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.account_circle),
-              tooltip: 'Account',
-              onPressed: () {
-                print('Account action pressed');
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()));
-              },
-            )
-          ],
-        ),
-      ),
+      appBar: _buildAppBar(context, 'iTMC'),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -60,9 +38,24 @@ class _HomePage extends State<HomePage> {
     );
   }
 
+  _buildAppBar(BuildContext context, String title) {
+    List<Widget> listActions = [
+      IconButton(
+        icon: Icon(Icons.account_circle),
+        tooltip: 'Account',
+        onPressed: () {
+          print('Account action pressed');
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        },
+      )
+    ];
+    return buildAppbar(context, title: 'iTMC', actions: listActions);
+  }
+
   _buildDrawer() {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.7,
+      width: MediaQuery.of(context).size.width * 0.8,
       child: Drawer(
         elevation: 1.0,
         child: Container(
@@ -70,11 +63,20 @@ class _HomePage extends State<HomePage> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              DrawerHeader(
-                padding: EdgeInsets.all(0),
-                child: Container(
-                  color: Colors.blue[900],
-                  child: Image.asset('assets/images/itmc.png'),
+              Container(
+                child: UserAccountsDrawerHeader(
+                  accountName: Text('Quang Vinhh'),
+                  accountEmail: Text('vinhvipit@gmail.com'),
+                  currentAccountPicture: FlatButton(
+                    color: Colors.white,
+                    child: Text('V', style: TextStyle(fontSize: 40, color: Colors.blue)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    onPressed: (){
+                      print('Account pressed');
+                    },
+                  )
                 ),
               ),
               Padding(

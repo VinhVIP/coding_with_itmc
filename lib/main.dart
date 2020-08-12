@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'lib/shared_preference.dart';
 import 'splashscreen.dart';
 
 void main() {
 //  SystemChrome.setEnabledSystemUIOverlays ([SystemUiOverlay.bottom]);
+  SharedPreferencesManager.getDarkModeValue();
   runApp(MyApp());
 }
 

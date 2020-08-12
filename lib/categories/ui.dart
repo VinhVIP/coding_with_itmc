@@ -1,7 +1,7 @@
+import 'package:coding_with_itmc/components/appbar.dart';
 import 'package:coding_with_itmc/config.dart';
 import 'package:coding_with_itmc/post/ui.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ListPostsPage extends StatelessWidget {
   final int categoryIndex;
@@ -11,26 +11,7 @@ class ListPostsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70),
-        child: AppBar(
-          backgroundColor: kPrimaryColor,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-          ),
-          title: Text(listCategories[categoryIndex].title,
-              style: GoogleFonts.lobster(fontSize: 23)),
-          leading: IconButton(
-            color: Colors.white,
-            icon: Icon(Icons.arrow_back_ios),
-            tooltip: 'Back',
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-      ),
+      appBar: _buildAppBar(context, listCategories[categoryIndex].title),
       backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -42,6 +23,18 @@ class ListPostsPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  _buildAppBar(BuildContext context, String title) {
+    Widget leading = IconButton(
+      color: Colors.white,
+      icon: Icon(Icons.arrow_back_ios),
+      tooltip: 'Back',
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    return buildAppbar(context, title: title, leading: leading);
   }
 }
 

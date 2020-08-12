@@ -1,6 +1,6 @@
+import 'package:coding_with_itmc/components/appbar.dart';
 import 'package:coding_with_itmc/components/rounded_button.dart';
 import 'package:coding_with_itmc/components/rounded_text_field.dart';
-import 'package:coding_with_itmc/config.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -14,24 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: AppBar(
-          backgroundColor: kPrimaryColor,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-          ),
-          leading: IconButton(
-            color: Colors.white,
-            icon: Icon(Icons.arrow_back_ios),
-            tooltip: 'Back',
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-      ),
+      appBar: _buildAppbar(context, 'Login'),
       backgroundColor: Colors.white,
       body: Container(
         padding: EdgeInsets.only(left: 10, right: 10),
@@ -119,5 +102,17 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  _buildAppbar(BuildContext context, String title) {
+    Widget leading = IconButton(
+      color: Colors.white,
+      icon: Icon(Icons.arrow_back_ios),
+      tooltip: 'Back',
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    return buildAppbar(context, title: title, leading: leading);
   }
 }

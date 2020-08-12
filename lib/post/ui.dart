@@ -1,3 +1,4 @@
+import 'package:coding_with_itmc/components/appbar.dart';
 import 'package:coding_with_itmc/components/choice.dart';
 import 'package:coding_with_itmc/components/mark_down.dart';
 import 'package:coding_with_itmc/config.dart';
@@ -46,8 +47,8 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
-      appBar: _buildAppBar(context),
+      backgroundColor: darkMode ? kBackgroundDarkColor : kCardColor,
+      appBar: _buildAppBar(context, listPosts[categoryIndex][postIndex].title),
       body: IndexedStack(
         index: _currentTabIndex,
         children: _kTabPages,
@@ -56,32 +57,21 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
-    return PreferredSize(
-      preferredSize: Size.fromHeight(70),
-      child: AppBar(
-        backgroundColor: kPrimaryColor,
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-        ),
-        title: Text(listPosts[categoryIndex][postIndex].title,
-            style: GoogleFonts.lobster(fontSize: 20)),
-        leading: IconButton(
-          color: Colors.white,
-          icon: Icon(Icons.arrow_back_ios),
-          tooltip: 'Back',
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+  Widget _buildAppBar(BuildContext context, String title) {
+    Widget leading = IconButton(
+      color: Colors.white,
+      icon: Icon(Icons.arrow_back_ios),
+      tooltip: 'Back',
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
     );
+    return buildAppbar(context, title: title, leading: leading);
   }
 
   Widget _buildBottomNavBar() {
     return BottomNavigationBar(
-      backgroundColor: darkMode ? kCardDarkColor : kBackgroundColor,
+      backgroundColor: darkMode ? kCardDarkColor : kCardColor,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           activeIcon: Icon(
