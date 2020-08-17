@@ -4,6 +4,7 @@ class RoundedTextField extends StatefulWidget {
   final bool hide;
   final String hintText;
   final ValueChanged<String> onChanged;
+  final TextEditingController controller;
   final Icon icon, suffixIcon;
 
   RoundedTextField(
@@ -11,13 +12,14 @@ class RoundedTextField extends StatefulWidget {
         this.hintText,
         this.hide,
         this.onChanged,
+        this.controller,
         this.icon,
         this.suffixIcon})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _RoundedTextField(key, hintText, hide, onChanged, icon, suffixIcon);
+    return _RoundedTextField(key, hintText, hide, onChanged, controller, icon, suffixIcon);
   }
 }
 
@@ -25,9 +27,11 @@ class _RoundedTextField extends State<RoundedTextField> {
   bool hide;
   final String hintText;
   final ValueChanged<String> onChanged;
+  final TextEditingController controller;
+
   final Icon icon, suffixIcon;
 
-  _RoundedTextField(Key key, this.hintText, this.hide, this.onChanged,
+  _RoundedTextField(Key key, this.hintText, this.hide, this.onChanged, this.controller,
       this.icon, this.suffixIcon);
 
   @override
@@ -45,6 +49,7 @@ class _RoundedTextField extends State<RoundedTextField> {
         borderRadius: BorderRadius.circular(30),
       ),
       child: TextField(
+        controller: controller,
         obscureText: hide == null ? false : hide,
         cursorColor: Colors.white,
         maxLines: 1,

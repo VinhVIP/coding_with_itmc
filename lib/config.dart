@@ -28,6 +28,20 @@ Color kTabActiveColor = Colors.blue;
 Color kTabColor = Colors.black26;
 
 
+String urlApi = 'https://itmc.herokuapp.com/api/v1';
+
+String urlUserProfile = urlApi + '/user/profile';
+
+String urlAuthSignUp = urlApi + '/auth/signup';
+String urlAuthLogin = urlApi + '/auth/login';
+String urlAuthGoogle = urlApi + '/auth/google';
+String urlAuthGithub = urlApi + '/auth/github';
+
+String urlCourse = urlApi + '/course';
+
+String token;
+
+
 final List<Post> listPostCppBeginner = [
   Post(
       'Các kiểu dữ liệu trong C++',
