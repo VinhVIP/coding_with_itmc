@@ -16,9 +16,6 @@ class ListPostsPage extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          SizedBox(
-            height: 20,
-          ),
           Expanded(child: ListPosts(categoryIndex)),
         ],
       ),
@@ -74,14 +71,18 @@ class ListPosts extends StatelessWidget {
             child: CircleAvatar(
               child: Text(
                 (index + 1).toString(),
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                    color: Colors.white, fontSize: 17, fontFamily: 'Oswald'),
               ),
               backgroundColor: kPrimaryLightColor,
             ),
           ),
           title: Text(
             listPosts[categoryIndex][index].title,
-            style: TextStyle(color: darkMode ? kTextDarkColor : kTextColor),
+            style: TextStyle(
+                color: darkMode ? kTextDarkColor : kTextColor,
+                fontSize: 17,
+                fontFamily: 'Oswald'),
           ),
         ),
       ),

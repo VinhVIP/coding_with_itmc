@@ -20,15 +20,20 @@ Widget buildMarkdown(BuildContext context, String data) {
         markdownTheme:
             darkMode ? MarkdownTheme.darkTheme : MarkdownTheme.lightTheme,
         preConfig: PreConfig(
-          language: 'c++',
-          margin: EdgeInsets.only(right: 20),
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10)
-        ),
+            language: 'c++',
+            margin: EdgeInsets.only(right: 20),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10)),
         imgBuilder: (String url, attributes) {
           if (url.startsWith("resources:"))
             return Image.asset(url.substring("resources:".length));
           else
-            return Image.network(url);
+            return Image.network(
+              url,
+              loadingBuilder: (context, child, loadingProgress) {
+                if(loadingProgress == null) return child;
+                else return Center(child: CircularProgressIndicator());
+              },
+            );
         }),
   );
 }

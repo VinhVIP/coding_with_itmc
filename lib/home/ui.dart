@@ -1,21 +1,25 @@
+import 'dart:ui';
+
 import 'package:coding_with_itmc/categories/ui.dart';
 import 'package:coding_with_itmc/components/appbar.dart';
 import 'package:coding_with_itmc/lib/shared_preference.dart';
 import 'package:coding_with_itmc/login/login_view.dart';
+import 'package:coding_with_itmc/profile/profile_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../config.dart';
 
 class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _HomePage();
+    return HomePageState();
   }
 }
 
-class _HomePage extends State<HomePage> {
-  _HomePage() {
+class HomePageState extends State<HomePage> {
+  HomePageState() {
     InitData initData = new InitData();
     initData.loadData();
   }
@@ -39,72 +43,125 @@ class _HomePage extends State<HomePage> {
   }
 
   _buildAppBar(BuildContext context, String title) {
-    List<Widget> listActions = [
-      IconButton(
-        icon: Icon(Icons.account_circle),
-        tooltip: 'Account',
-        onPressed: () {
-          print('Account action pressed');
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => LoginScreen()));
-        },
-      )
-    ];
-    return buildAppbar(context, title: 'iTMC', actions: listActions);
+//    List<Widget> listActions = [
+//      IconButton(
+//        icon: Icon(Icons.account_circle),
+//        tooltip: 'Account',
+//        onPressed: () {
+//          print('Account action pressed');
+//          Navigator.push(context,
+//                  MaterialPageRoute(builder: (context) => LoginScreen()))
+//              .then((value) {
+//            setState(() {});
+//          });
+//        },
+//      )
+//    ];
+    return buildAppbar(context, title: 'iTMC');
   }
 
   _buildDrawer() {
+    var drawerHeader = UserAccountsDrawerHeader(
+      decoration: BoxDecoration(
+        color: kPrimaryColor,
+      ),
+      accountName: Text(
+        user.login ? user.firstName + " " + user.lastName : "Trần Quang Vinh",
+        style: TextStyle(
+            fontFamily: 'Oswald', fontWeight: FontWeight.bold, fontSize: 17),
+      ),
+      accountEmail: Text(user.login ? user.email : 'vinh@gmail.com',
+          style: TextStyle(fontFamily: 'Oswald', fontSize: 16)),
+      currentAccountPicture: FlatButton(
+        color: Colors.white,
+        child: Text(
+            user.login ? user.lastName.substring(0, 1).toUpperCase() : 'A',
+            style: TextStyle(fontSize: 40, color: Colors.blue)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(40),
+        ),
+        onPressed: () {
+          print('Account pressed');
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ProfileScreen()));
+        },
+      ),
+    );
+
+    var drawerItems = ListView(
+      children: <Widget>[
+        drawerHeader,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.brightness_6,
+                  color: kPrimaryColor,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Dark Mode',
+                  style: TextStyle(
+                    fontFamily: 'Oswald',
+                    fontSize: 17,
+//                    color: darkMode ? kTextDarkColor : kTextColor,
+                  ),
+                ),
+              ],
+            ),
+            Switch(
+              value: darkMode,
+              onChanged: (bool value) {
+                setState(() {
+                  darkMode = value;
+                  SharedPreferencesManager.saveDarkModeValue();
+                });
+              },
+            )
+          ],
+        ),
+        InkWell(
+          splashColor: Colors.red,
+          child: Container(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.timer_off),
+                SizedBox(width: 10),
+                Text(
+                  'Đăng xuất',
+                  style: TextStyle(
+                      fontFamily: 'Oswald',
+                      fontSize: 17,
+//                      color: darkMode ? kTextDarkColor : kTextColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginScreen(),
+                ),
+                (_) => false).then((value) {
+              setState(() {});
+            });
+          },
+        ),
+      ],
+    );
+
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: MediaQuery.of(context).size.width * 0.7,
       child: Drawer(
         elevation: 1.0,
         child: Container(
-          color: darkMode ? kBackgroundDarkColor : kBackgroundColor,
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              Container(
-                child: UserAccountsDrawerHeader(
-                  accountName: Text('Quang Vinhh'),
-                  accountEmail: Text('vinhvipit@gmail.com'),
-                  currentAccountPicture: FlatButton(
-                    color: Colors.white,
-                    child: Text('V', style: TextStyle(fontSize: 40, color: Colors.blue)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    onPressed: (){
-                      print('Account pressed');
-                    },
-                  )
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      'Dark Mode',
-                      style: TextStyle(
-                          color: darkMode ? kTextDarkColor : kTextColor),
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Switch(
-                      value: darkMode,
-                      onChanged: (bool value) {
-                        setState(() {
-                          darkMode = value;
-                          SharedPreferencesManager.saveDarkModeValue();
-                        });
-                      },
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
+//          color: darkMode ? kBackgroundDarkColor : kBackgroundColor,
+          child: drawerItems,
         ),
       ),
     );
@@ -146,13 +203,18 @@ class ListCategories extends StatelessWidget {
           ),
           title: Text(
             listCategories[index].title,
-            style: TextStyle(color: darkMode ? kTextDarkColor : kTextColor),
+            style: TextStyle(
+                color: darkMode ? kTextDarkColor : kTextColor,
+                fontSize: 18,
+                fontFamily: 'Oswald'),
           ),
           subtitle: Text(
             listCategories[index].numPosts.toString() + " bài học",
             style: TextStyle(
-                color:
-                    darkMode ? kTextSecondaryDarkColor : kTextSecondaryColor),
+                color: darkMode ? kTextSecondaryDarkColor : kTextSecondaryColor,
+                fontSize: 14,
+                fontFamily: 'Oswald',
+                fontWeight: FontWeight.w200),
           ),
         ),
       ),

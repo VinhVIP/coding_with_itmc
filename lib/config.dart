@@ -1,4 +1,4 @@
-import 'package:coding_with_itmc/lib/shared_preference.dart';
+import 'package:coding_with_itmc/models/user.dart';
 import 'package:flutter/material.dart';
 
 import 'models/category.dart';
@@ -40,7 +40,9 @@ String urlAuthGithub = urlApi + '/auth/github';
 String urlCourse = urlApi + '/course';
 
 String token;
+User user = new User();
 
+List<String> userSignUp = new List(2);
 
 final List<Post> listPostCppBeginner = [
   Post(

@@ -4,7 +4,6 @@ import 'package:coding_with_itmc/components/mark_down.dart';
 import 'package:coding_with_itmc/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PostPage extends StatefulWidget {
   final int categoryIndex, postIndex;
@@ -74,37 +73,22 @@ class _PostPageState extends State<PostPage> {
       backgroundColor: darkMode ? kCardDarkColor : kCardColor,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          activeIcon: Icon(
-            Icons.library_books,
-            color: kTabActiveDarkColor,
-          ),
           icon: Icon(
             Icons.library_books,
-            color: darkMode ? kTabDarkColor : kTabColor,
           ),
-          title: Text(
-            'Lý thuyết',
-            style: TextStyle(color: darkMode ? kTabDarkColor : kTabColor),
-          ),
+          title: Text('Lý thuyết', style: TextStyle(fontFamily: 'Oswald'),),
         ),
         BottomNavigationBarItem(
-          activeIcon: Icon(
-            Icons.check_circle,
-            color: kTabActiveDarkColor,
-          ),
           icon: Icon(
             Icons.check_circle,
-            color: darkMode ? kTabDarkColor : kTabColor,
           ),
-          title: Text(
-            'Trắc nghiệm',
-            style: TextStyle(color: darkMode ? kTabDarkColor : kTabColor),
-          ),
+          title: Text('Trắc nghiệm', style: TextStyle(fontFamily: 'Oswald')),
         ),
       ],
       currentIndex: _currentTabIndex,
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: kPrimaryColor,
+      selectedItemColor: darkMode ? Colors.white : kPrimaryColor,
+      unselectedItemColor: Colors.grey,
       onTap: (index) {
         setState(() {
           _currentTabIndex = index;

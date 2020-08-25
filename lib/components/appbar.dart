@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../config.dart';
 
@@ -10,7 +9,7 @@ PreferredSize buildAppbar(BuildContext context, {String title, Widget leading, L
       backgroundColor: kPrimaryColor,
       title: Text(
         title,
-        style: GoogleFonts.lobster(fontSize: 20),
+        style: TextStyle(fontFamily: 'Lobster', fontSize: 20),
       ),
       elevation: 4,
       shape: RoundedRectangleBorder(

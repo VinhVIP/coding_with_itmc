@@ -57,19 +57,19 @@ class _RoundedTextField extends State<RoundedTextField> {
         onChanged: onChanged,
         decoration: InputDecoration(
           icon: icon,
-          suffixIcon: IconButton(
-            color: Colors.white,
-            icon: Icon(hide == null
-                ? null
-                : (hide ? Icons.visibility_off : Icons.visibility)),
-            onPressed: () {
-              setState(() {
-                if (hide != null) {
-                  hide = !hide;
-                }
-              });
-            },
-          ),
+//          suffixIcon: IconButton(
+//            color: Colors.white,
+//            icon: Icon(hide == null
+//                ? null
+//                : (hide ? Icons.visibility_off : Icons.visibility)),
+//            onPressed: () {
+//              setState(() {
+//                if (hide != null) {
+//                  hide = !hide;
+//                }
+//              });
+//            },
+//          ),
           border: InputBorder.none,
           hintText: hintText,
           hintStyle: TextStyle(color: Colors.white70),
