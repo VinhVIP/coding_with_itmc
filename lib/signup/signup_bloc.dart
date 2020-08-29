@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SignUpBloc with ChangeNotifier {
+
   final _emailSubject = BehaviorSubject<String>();
   final _passSubject = BehaviorSubject<String>();
   final _firstNameSubject = BehaviorSubject<String>();

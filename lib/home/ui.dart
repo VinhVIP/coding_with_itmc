@@ -3,11 +3,12 @@ import 'dart:ui';
 import 'package:coding_with_itmc/categories/ui.dart';
 import 'package:coding_with_itmc/components/appbar.dart';
 import 'package:coding_with_itmc/lib/shared_preference.dart';
-import 'package:coding_with_itmc/login/login_view.dart';
+import 'package:coding_with_itmc/login/login_ui.dart';
+import 'package:coding_with_itmc/models/theme.dart';
 import 'package:coding_with_itmc/profile/profile_view.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 import '../config.dart';
 
@@ -25,9 +26,31 @@ class HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => MyTheme(),
+      child: Consumer<MyTheme>(
+        builder: (context, theme, child) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
+          home: _mainWidget(context),
+        ),
+      ),
+    );
+    
+    
+  }
+  
+  Widget _mainWidget(BuildContext context){
     return Scaffold(
-      backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
+//      backgroundColor: Theme.of(context).backgroundColor,
       appBar: _buildAppBar(context, 'iTMC'),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -43,20 +66,6 @@ class HomePageState extends State<HomePage> {
   }
 
   _buildAppBar(BuildContext context, String title) {
-//    List<Widget> listActions = [
-//      IconButton(
-//        icon: Icon(Icons.account_circle),
-//        tooltip: 'Account',
-//        onPressed: () {
-//          print('Account action pressed');
-//          Navigator.push(context,
-//                  MaterialPageRoute(builder: (context) => LoginScreen()))
-//              .then((value) {
-//            setState(() {});
-//          });
-//        },
-//      )
-//    ];
     return buildAppbar(context, title: 'iTMC');
   }
 
@@ -66,16 +75,15 @@ class HomePageState extends State<HomePage> {
         color: kPrimaryColor,
       ),
       accountName: Text(
-        user.login ? user.firstName + " " + user.lastName : "Trần Quang Vinh",
+        user.firstName + " " + user.lastName,
         style: TextStyle(
             fontFamily: 'Oswald', fontWeight: FontWeight.bold, fontSize: 17),
       ),
-      accountEmail: Text(user.login ? user.email : 'vinh@gmail.com',
+      accountEmail: Text(user.email,
           style: TextStyle(fontFamily: 'Oswald', fontSize: 16)),
       currentAccountPicture: FlatButton(
         color: Colors.white,
-        child: Text(
-            user.login ? user.lastName.substring(0, 1).toUpperCase() : 'A',
+        child: Text(user.lastName.substring(0, 1).toUpperCase(),
             style: TextStyle(fontSize: 40, color: Colors.blue)),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(40),
@@ -111,14 +119,17 @@ class HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            Switch(
-              value: darkMode,
-              onChanged: (bool value) {
-                setState(() {
-                  darkMode = value;
-                  SharedPreferencesManager.saveDarkModeValue();
-                });
-              },
+            Consumer<MyTheme>(
+              builder: (context, theme, child) => Switch(
+                value: darkMode,
+                onChanged: (bool value) {
+                  setState(() {
+                    darkMode = value;
+                    SharedPreferencesManager.saveDarkModeValue();
+                    theme.changeTheme();
+                  });
+                },
+              ),
             )
           ],
         ),
@@ -132,8 +143,8 @@ class HomePageState extends State<HomePage> {
                 Text(
                   'Đăng xuất',
                   style: TextStyle(
-                      fontFamily: 'Oswald',
-                      fontSize: 17,
+                    fontFamily: 'Oswald',
+                    fontSize: 17,
 //                      color: darkMode ? kTextDarkColor : kTextColor,
                   ),
                 ),
@@ -141,15 +152,20 @@ class HomePageState extends State<HomePage> {
             ),
           ),
           onTap: () {
-            Navigator.of(context).pop();
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginScreen(),
-                ),
-                (_) => false).then((value) {
-              setState(() {});
-            });
+            SharedPreferencesManager.saveUserLogged(false, '', '');
+            userLogin.isLogged = false;
+
+//            Navigator.of(context).pop();
+//            Navigator.pushAndRemoveUntil(
+//                context,
+//                MaterialPageRoute(
+//                  builder: (context) => LoginPage(),
+//                ),
+//                (_) => false).then((value) {
+//              setState(() {});
+//            });
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
           },
         ),
       ],
@@ -181,14 +197,16 @@ class ListCategories extends StatelessWidget {
   }
 
   Widget _rowItem(BuildContext context, int index) {
+    var size = MediaQuery.of(context).size.width;
+
     return Card(
-      color: darkMode ? kCardDarkColor : kCardColor,
+//      color: darkMode ? kCardDarkColor : kCardColor,
       margin: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       elevation: 5,
       child: InkWell(
         borderRadius: BorderRadius.circular(25),
-        splashColor: darkMode ? kCardHighlightDarkColor : kCardHighlightColor,
+//        splashColor: darkMode ? kCardHighlightDarkColor : kCardHighlightColor,
         onTap: () {
           _moveToCategory(context, index);
         },

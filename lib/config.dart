@@ -18,6 +18,7 @@ Color kPrimaryLightColor = Colors.blue[800]; //blue 800
 
 Color kBackgroundColor = Color(0xfff5fbfb); //grey 200
 Color kCardColor = Colors.white; //white 54
+
 Color kCardHighlightColor = Colors.blue[50]; //blue 50
 Color kTextColor = Colors.black;
 Color kTextSecondaryColor = Color(0xff5d827e);
@@ -26,6 +27,20 @@ Color kTabActiveDarkColor = Colors.blueAccent;
 Color kTabDarkColor = Colors.white30;
 Color kTabActiveColor = Colors.blue;
 Color kTabColor = Colors.black26;
+
+final lightTheme = ThemeData(
+  canvasColor: kBackgroundColor,
+  cardColor: kCardColor,
+  primarySwatch: Colors.blue,
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+);
+
+final darkTheme = ThemeData(
+  canvasColor: kBackgroundDarkColor,
+  cardColor: kCardDarkColor,
+  primarySwatch: Colors.blue,
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+);
 
 
 String urlApi = 'https://itmc.herokuapp.com/api/v1';
@@ -40,22 +55,37 @@ String urlAuthGithub = urlApi + '/auth/github';
 String urlCourse = urlApi + '/course';
 
 String token;
-User user = new User();
 
-List<String> userSignUp = new List(2);
+User user = new User();
+UserLogin userLogin = new UserLogin(false, "", "");
+UserStore userStore = new UserStore("", "");
+
+UserStore userSignUp;
 
 final List<Post> listPostCppBeginner = [
   Post(
-      'Các kiểu dữ liệu trong C++',
+      'Cấu trúc chương trình C++',
+      'assets/data/posts/cpp_beginner/hello.md',
+      'assets/data/posts/cpp_beginner/bai1_tn.md'),
+  Post(
+      'Các kiểu dữ liệu ',
       'assets/data/posts/cpp_beginner/kdl.md',
       'assets/data/posts/cpp_beginner/bai1_tn.md'),
   Post(
-      'Biến trong C++',
+      'Biến và hằng',
       'assets/data/posts/cpp_beginner/bien.md',
       'assets/data/posts/cpp_beginner/bai1_tn.md'),
   Post(
       'Ép kiểu dữ liệu',
       'assets/data/posts/cpp_beginner/ekdl.md',
+      'assets/data/posts/cpp_beginner/bai1_tn.md'),
+  Post(
+      'Toán tử',
+      'assets/data/posts/cpp_beginner/toantu.md',
+      'assets/data/posts/cpp_beginner/bai1_tn.md'),
+  Post(
+      'Các hàm toán học cơ bản (cmath)',
+      'assets/data/posts/cpp_beginner/cmath.md',
       'assets/data/posts/cpp_beginner/bai1_tn.md'),
   Post(
       'Câu lệnh điều kiện (if else)',
@@ -74,12 +104,16 @@ final List<Post> listPostCppBeginner = [
       'assets/data/posts/cpp_beginner/for.md',
       'assets/data/posts/cpp_beginner/bai1_tn.md'),
   Post(
-      'Mảng một chiều trong C++',
+      'Mảng một chiều',
       'assets/data/posts/cpp_beginner/mang.md',
       'assets/data/posts/cpp_beginner/bai1_tn.md'),
   Post(
-      'Kiểu kí tự (char & string)',
+      'Kiểu kí tự (char)',
       'assets/data/posts/cpp_beginner/kt.md',
+      'assets/data/posts/cpp_beginner/bai1_tn.md'),
+  Post(
+      'Kiểu chuỗi (string)',
+      'assets/data/posts/cpp_beginner/string.md',
       'assets/data/posts/cpp_beginner/bai1_tn.md'),
   Post(
       'Hàm',

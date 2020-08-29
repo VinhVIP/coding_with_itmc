@@ -1,6 +1,4 @@
 class User {
-  bool login;
-
   String email;
   String pass;
   String firstName;
@@ -12,8 +10,7 @@ class User {
   String gravatar;
 
   User(
-      {this.login,
-      this.email,
+      {this.email,
       this.pass,
       this.firstName,
       this.lastName,
@@ -21,9 +18,7 @@ class User {
       this.gender,
       this.studentID,
       this.school,
-      this.gravatar}) {
-    login = false;
-  }
+      this.gravatar});
 
   convert(Map<String, dynamic> json) {
     firstName = json['firstName'] ?? null;
@@ -49,4 +44,19 @@ class User {
       dateOfBirth = s[1] + "/" + s[2] + "/" + s[0];
     }
   }
+}
+
+class UserLogin {
+  bool isLogged;
+  String email;
+  String pass;
+
+  UserLogin(this.isLogged, this.email, this.pass);
+}
+
+class UserStore {
+  String email;
+  String pass;
+
+  UserStore(this.email, this.pass);
 }

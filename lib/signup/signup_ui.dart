@@ -268,8 +268,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                           child: Text('OK', style: TextStyle(color: Colors.blue, fontSize: 18)),
                           onPressed: () {
                             if (notify.code == 201) {
-                              userSignUp[0] = emailController.text;
-                              userSignUp[1] = passController.text;
+                              userSignUp.email = emailController.text;
+                              userSignUp.pass = passController.text;
 
                               Navigator.of(context).pop('OK');
                             } else {
