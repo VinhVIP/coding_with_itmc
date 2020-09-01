@@ -2,6 +2,7 @@ import 'package:coding_with_itmc/components/appbar.dart';
 import 'package:coding_with_itmc/config.dart';
 import 'package:coding_with_itmc/post/ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ListPostsPage extends StatelessWidget {
   final int categoryIndex;
@@ -11,7 +12,7 @@ class ListPostsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(context, listCategories[categoryIndex].title),
+      appBar: _buildAppBar(context, listCoursesBasic[categoryIndex].title),
 //      backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -43,10 +44,38 @@ class ListPosts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: listPosts[categoryIndex].length,
+        itemCount: listLessons[categoryIndex].length,
         itemBuilder: (BuildContext context, int index) {
           return _rowItem(context, index);
         });
+  }
+
+  Widget _test(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25), bottomLeft: Radius.circular(25)),
+          child: Container(
+            width: 60,
+            height: 45,
+            color: Colors.green,
+          ),
+        ),
+        ClipRRect(
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+          child: Container(
+            width: size.width - 80,
+            height: 45,
+            color: Colors.blue,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _rowItem(BuildContext context, int index) {
@@ -78,7 +107,7 @@ class ListPosts extends StatelessWidget {
             ),
           ),
           title: Text(
-            listPosts[categoryIndex][index].title,
+            listLessons[categoryIndex][index].title,
             style: TextStyle(
                 color: darkMode ? kTextDarkColor : kTextColor,
                 fontSize: 17,

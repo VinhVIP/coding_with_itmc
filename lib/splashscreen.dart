@@ -4,7 +4,6 @@ import 'package:coding_with_itmc/config.dart';
 import 'package:coding_with_itmc/home/ui.dart';
 import 'package:coding_with_itmc/login/login_model.dart';
 import 'package:coding_with_itmc/login/login_ui.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'lib/shared_preference.dart';
@@ -46,16 +45,25 @@ class _SplashState extends State<Splash> {
     if (userLogin.isLogged) {
       LoginModel().requestLogin(userLogin.email, userLogin.pass).then((value) {
         if (value.code == 200) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()));
+          Navigator.of(context).pop();
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+              (route) => false);
         } else {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => LoginPage()));
+          Navigator.of(context).pop();
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+                  (route) => false);
         }
       });
     } else {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+      Navigator.of(context).pop();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+              (route) => false);
     }
   }
 
@@ -68,5 +76,4 @@ class _SplashState extends State<Splash> {
       ),
     );
   }
-
 }

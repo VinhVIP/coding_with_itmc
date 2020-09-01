@@ -16,7 +16,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppbar(context, title: 'Login'),
-      backgroundColor: Colors.white,
+      backgroundColor: darkMode ? kBackgroundDarkColor : Colors.white,
       body: ChangeNotifierProvider<LoginBloc>(
         create: (_) => LoginBloc(),
         child: LoginWidget(),
@@ -39,14 +39,12 @@ class _LoginWidgetState extends State<LoginWidget> {
     SharedPreferencesManager.getUserStore();
 
     emailController.addListener(() {
-      Provider
-          .of<LoginBloc>(context, listen: false)
+      Provider.of<LoginBloc>(context, listen: false)
           .emailSink
           .add(emailController.text);
     });
     passController.addListener(() {
-      Provider
-          .of<LoginBloc>(context, listen: false)
+      Provider.of<LoginBloc>(context, listen: false)
           .passSink
           .add(passController.text);
     });
@@ -70,7 +68,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     return Center(
       child: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -146,7 +144,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           hide: true,
           hintText: "Password",
           icon: Icon(
-            Icons.account_circle,
+            Icons.lock,
             color: Colors.white,
           ),
         );
@@ -162,7 +160,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             text: 'Đăng nhập',
             textColor: Colors.white,
             backgroundColor:
-            snapshot.data == true ? Colors.blueAccent : Colors.grey,
+                snapshot.data == true ? Colors.blueAccent : Colors.grey,
             borderColor: Colors.white,
             onPressed: () {
               if (snapshot.data != true) return;
@@ -176,9 +174,13 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   _buildButtonForgotPass() {
     return FlatButton(
+      splashColor: Colors.greenAccent,
       child: Text(
         'Quên mật khẩu ?',
-        style: TextStyle(fontFamily: 'Oswald', fontWeight: FontWeight.w300),
+        style: TextStyle(
+            fontFamily: 'Oswald',
+            fontWeight: FontWeight.w300,
+            color: darkMode ? kTextDarkColor : kTextColor),
       ),
       onPressed: () {
         print('Forget password');
@@ -190,11 +192,11 @@ class _LoginWidgetState extends State<LoginWidget> {
     return RoundedButton(
       text: 'Đăng kí tài khoản mới',
       textColor: Colors.blueAccent,
-      backgroundColor: Colors.white,
+      backgroundColor: darkMode ? kBackgroundDarkColor : Colors.white,
       borderColor: Colors.blueAccent,
       onPressed: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignUpPage()))
+                context, MaterialPageRoute(builder: (context) => SignUpPage()))
             .then((value) {
           if (value != null)
             setState(() {
@@ -208,8 +210,9 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   _goToHomePage() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HomePage()));
+    Navigator.of(context).pop();
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) => HomePage()), (route) => false);
   }
 
   _showDialogLogin(BuildContext context, LoginBloc loginBloc) async {
@@ -229,15 +232,17 @@ class _LoginWidgetState extends State<LoginWidget> {
                 true, emailController.text, passController.text);
             SharedPreferencesManager.saveUserStore(
                 emailController.text, passController.text);
+            Navigator.pop(context, true);
             _goToHomePage();
           },
         ),
         FlatButton(
           child:
-          Text('Không', style: TextStyle(color: Colors.blue, fontSize: 18)),
+              Text('Không', style: TextStyle(color: Colors.blue, fontSize: 18)),
           onPressed: () {
             SharedPreferencesManager.saveUserLogged(
                 true, emailController.text, passController.text);
+            Navigator.pop(context, true);
             _goToHomePage();
           },
         ),
@@ -249,14 +254,15 @@ class _LoginWidgetState extends State<LoginWidget> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: darkMode ? kBackgroundDarkColor : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           title: Center(
               child: Text(
-                'Đăng nhập',
-                style: TextStyle(color: Colors.indigo, fontSize: 22),
-              )),
+            'Đăng nhập',
+            style: TextStyle(color: Colors.indigo, fontSize: 22),
+          )),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -269,36 +275,43 @@ class _LoginWidgetState extends State<LoginWidget> {
 
                     return Column(
                       children: <Widget>[
-                        Center(child: Text(notify.message)),
+                        Center(
+                          child: Text(
+                            notify.message,
+                            style: TextStyle(
+                                color: darkMode ? kTextDarkColor : kTextColor),
+                          ),
+                        ),
                         (notify.code == 200 &&
-                            !loginBloc.isUserStored(
-                                emailController.text.trim(),
-                                passController.text))
+                                !loginBloc.isUserStored(
+                                    emailController.text.trim(),
+                                    passController.text))
                             ? Text('Lưu mật khẩu?')
                             : SizedBox(height: 1),
                         SizedBox(height: 10),
                         (notify.code == 200 &&
-                            !loginBloc.isUserStored(
-                                emailController.text.trim(),
-                                passController.text))
+                                !loginBloc.isUserStored(
+                                    emailController.text.trim(),
+                                    passController.text))
                             ? widgetSaveUser
                             : FlatButton(
-                          child: Text(
-                            'OK',
-                            style: TextStyle(
-                                color: Colors.blue, fontSize: 18),
-                          ),
-                          onPressed: () {
-                            if (notify.code == 200) {
-                              SharedPreferencesManager.saveUserLogged(
-                                  true, emailController.text.trim(),
-                                  passController.text);
-                              _goToHomePage();
-                            } else {
-                              Navigator.of(context).pop();
-                            }
-                          },
-                        ),
+                                child: Text(
+                                  'OK',
+                                  style: TextStyle(
+                                      color: Colors.blue, fontSize: 18),
+                                ),
+                                onPressed: () {
+                                  if (notify.code == 200) {
+                                    SharedPreferencesManager.saveUserLogged(
+                                        true,
+                                        emailController.text.trim(),
+                                        passController.text);
+                                    _goToHomePage();
+                                  } else {
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                              ),
                       ],
                     );
                   } else {
@@ -311,10 +324,10 @@ class _LoginWidgetState extends State<LoginWidget> {
         );
       },
     ).then((value) {
-      if (value != null && value.compareTo("OK") == 0) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
-      }
+//      if (value != null && value.compareTo("OK") == 0) {
+//        Navigator.push(
+//            context, MaterialPageRoute(builder: (context) => HomePage()));
+//      }
     });
   }
 }

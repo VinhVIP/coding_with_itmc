@@ -47,7 +47,7 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: darkMode ? kBackgroundDarkColor : kCardColor,
-      appBar: _buildAppBar(context, listPosts[categoryIndex][postIndex].title),
+      appBar: _buildAppBar(context, listLessons[categoryIndex][postIndex].title),
       body: IndexedStack(
         index: _currentTabIndex,
         children: _kTabPages,
@@ -107,7 +107,7 @@ class PageLesson extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: getFileContent(listPosts[categoryIndex][postIndex].pathLesson),
+      future: getFileContent(listLessons[categoryIndex][postIndex].pathLesson),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
@@ -143,7 +143,7 @@ class PageChoice extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
       future:
-          getFileChoiceContent(listPosts[categoryIndex][postIndex].pathChoice),
+          getFileChoiceContent(listLessons[categoryIndex][postIndex].pathChoice),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {

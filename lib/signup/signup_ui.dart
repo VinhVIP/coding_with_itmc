@@ -1,4 +1,5 @@
 import 'package:coding_with_itmc/components/appbar.dart';
+import 'package:coding_with_itmc/components/input_decoration.dart';
 import 'package:coding_with_itmc/components/rounded_button.dart';
 import 'package:coding_with_itmc/models/notification.dart';
 import 'package:coding_with_itmc/signup/signup_bloc.dart';
@@ -12,7 +13,7 @@ class SignUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppbar(context, 'SignUp'),
-      backgroundColor: Colors.white,
+      backgroundColor: darkMode ? kBackgroundDarkColor: Colors.white,
       body: ChangeNotifierProvider<SignUpBloc>(
         create: (_) => SignUpBloc(),
         child: SignUpWidget(),
@@ -133,19 +134,16 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     );
   }
 
+
   _buildEmailInput(emailStream) {
     return StreamBuilder<String>(
       stream: emailStream,
       builder: (_, snapshot) {
         return TextFormField(
           controller: emailController,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue),
-            ),
-            labelText: 'Email',
-            hintText: 'Ví dụ: nguyenvanan@gmail.com',
-            errorText: snapshot.data,
+          decoration: customInputBorder(labelText: 'Email', hintText: 'Ví dụ: nguyenvanan@gmail.com', errorText: snapshot.data),
+          style: TextStyle(
+            color: darkMode ? kTextDarkColor : kTextColor,
           ),
           textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) => context.nextEditableTextFocus(),
@@ -162,10 +160,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
         return TextFormField(
           controller: passController,
           obscureText: true,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Mật khẩu',
-            errorText: snapshot.data,
+          decoration: customInputBorder(labelText: 'Mật khẩu', errorText: snapshot.data),
+          style: TextStyle(
+            color: darkMode ? kTextDarkColor : kTextColor,
           ),
           textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) => context.nextEditableTextFocus(),
@@ -180,12 +177,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       builder: (_, snapshot) {
         return TextFormField(
           controller: firstNameController,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Họ và tên đệm',
-            hintText: 'Ví dụ: Nguyễn Văn',
-//                    errorText: _firstNameIsValid ? null : 'Họ và tên đệm không được bỏ trống',
-            errorText: snapshot.data,
+          decoration: customInputBorder(labelText: 'Họ và tên đệm', hintText: 'Ví dụ: Nguyễn Văn', errorText: snapshot.data),
+          style: TextStyle(
+            color: darkMode ? kTextDarkColor : kTextColor,
           ),
           textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) => context.nextEditableTextFocus(),
@@ -200,11 +194,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       builder: (_, snapshot) {
         return TextFormField(
           controller: lastNameController,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Tên',
-            hintText: 'Ví dụ: An',
-            errorText: snapshot.data,
+          decoration: customInputBorder(labelText: 'Tên', hintText: 'Ví dụ: An', errorText: snapshot.data),
+          style: TextStyle(
+            color: darkMode ? kTextDarkColor : kTextColor,
           ),
           textInputAction: TextInputAction.done,
           onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
@@ -239,6 +231,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: darkMode ? kBackgroundDarkColor : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
@@ -262,7 +255,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
 
                     return Column(
                       children: <Widget>[
-                        Text(notify.message),
+                        Text(notify.message, style: TextStyle(
+                            color: darkMode ? kTextDarkColor : kTextColor),),
                         SizedBox(height: 10),
                         FlatButton(
                           child: Text('OK', style: TextStyle(color: Colors.blue, fontSize: 18)),

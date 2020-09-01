@@ -1,8 +1,8 @@
-class Post {
+class Lesson {
   String _title;
   String _pathLesson, _pathChoice;
 
-  Post(this._title, this._pathLesson, this._pathChoice);
+  Lesson(this._title, this._pathLesson, this._pathChoice);
 
   get pathChoice => _pathChoice;
 

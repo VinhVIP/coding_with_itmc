@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:coding_with_itmc/components/appbar.dart';
+import 'package:coding_with_itmc/components/input_decoration.dart';
 import 'package:coding_with_itmc/components/rounded_button.dart';
 import 'package:coding_with_itmc/config.dart';
 import 'package:coding_with_itmc/models/notification.dart';
@@ -166,25 +167,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: 2),
-//                      Text('${user.firstName} ${user.lastName}', style: TextStyle(fontSize: 17)),
-//                      SizedBox(height: 15),
             Text(
                 user.gender == 0
                     ? 'Nam'
                     : (user.gender == 1 ? 'Nữ' : 'Không rõ'),
-                style: TextStyle(fontSize: 18, fontFamily: 'Oswald')),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Oswald',
+                  color: darkMode ? kTextDarkColor : kTextColor,
+                )),
             SizedBox(height: 20),
             Text('${user.dateOfBirth ?? 'Chưa cập nhật'}',
-                style: TextStyle(fontSize: 18, fontFamily: 'Oswald')),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Oswald',
+                  color: darkMode ? kTextDarkColor : kTextColor,
+                )),
             SizedBox(height: 20),
             Text('${user.studentID ?? 'Chưa cập nhật'}',
-                style: TextStyle(fontSize: 18, fontFamily: 'Oswald')),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Oswald',
+                  color: darkMode ? kTextDarkColor : kTextColor,
+                )),
             SizedBox(height: 20),
             Container(
               width: MediaQuery.of(context).size.width - 170,
               child: Text(
                 '${user.school ?? 'Chưa cập nhật'}',
-                style: TextStyle(fontSize: 18, fontFamily: 'Oswald'),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Oswald',
+                  color: darkMode ? kTextDarkColor : kTextColor,
+                ),
                 overflow: TextOverflow.fade,
               ),
             ),
@@ -199,12 +214,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: <Widget>[
           TextFormField(
             controller: _firstNameController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Họ và tên đệm',
-              errorText: _firstNameIsValid
-                  ? null
-                  : 'Họ và tên đệm không được bỏ trống',
+            decoration: customInputBorder(
+                labelText: 'Họ và tên đệm',
+                errorText: _firstNameIsValid
+                    ? null
+                    : 'Họ và tên đệm không được bỏ trống'),
+            style: TextStyle(
+              color: darkMode ? kTextDarkColor : kTextColor,
             ),
             onChanged: (value) {
               if (_firstNameIsValid != _checkFirstNameIsValid(value)) {
@@ -219,11 +235,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(height: 20),
           TextFormField(
             controller: _lastNameController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Tên',
-              errorText:
-                  _lastNameIsValid ? null : 'Tên đệm không được bỏ trống',
+            decoration: customInputBorder(
+                labelText: 'Tên',
+                errorText: _lastNameIsValid ? null : 'Tên đệm không được bỏ trống'),
+            style: TextStyle(
+              color: darkMode ? kTextDarkColor : kTextColor,
             ),
             onChanged: (value) {
               if (_lastNameIsValid != _checkLastNameIsValid(value)) {
@@ -240,7 +256,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             alignment: Alignment.topLeft,
             child: Text(
               ' Giới tính: ',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: darkMode ? kTextDarkColor : kTextColor,
+              ),
             ),
           ),
           Wrap(
@@ -248,26 +268,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Radio(
-                    value: 0,
-                    groupValue: _radioGenderValue,
-                    onChanged: _handleRadioGenderValueChange,
+                  Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.blue,
+                    ),
+                    child: Radio(
+                      value: 0,
+                      groupValue: _radioGenderValue,
+                      onChanged: _handleRadioGenderValueChange,
+                    ),
                   ),
-                  Text('Nam'),
+                  Text(
+                    'Nam',
+                    style: TextStyle(
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    ),
+                  ),
                   SizedBox(width: 20),
-                  Radio(
-                    value: 1,
-                    groupValue: _radioGenderValue,
-                    onChanged: _handleRadioGenderValueChange,
+                  Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.blue,
+                    ),
+                    child: Radio(
+                      value: 1,
+                      groupValue: _radioGenderValue,
+                      onChanged: _handleRadioGenderValueChange,
+                    ),
                   ),
-                  Text('Nữ'),
+                  Text(
+                    'Nữ',
+                    style: TextStyle(
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    ),
+                  ),
                   SizedBox(width: 20),
-                  Radio(
-                    value: 2,
-                    groupValue: _radioGenderValue,
-                    onChanged: _handleRadioGenderValueChange,
+                  Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.blue,
+                    ),
+                    child: Radio(
+                      value: 2,
+                      groupValue: _radioGenderValue,
+                      onChanged: _handleRadioGenderValueChange,
+                    ),
                   ),
-                  Text('Không rõ'),
+                  Text(
+                    'Không rõ',
+                    style: TextStyle(
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -277,14 +327,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(width: 4),
               Text(
                 'Ngày sinh:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: darkMode ? kTextDarkColor : kTextColor,
+                ),
               ),
               SizedBox(width: 20),
               Container(
                 width: 100,
                 child: Text(
                   '$_dateOfBirth',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: darkMode ? kTextDarkColor : kTextColor,
+                  ),
                 ),
               ),
               FlatButton(
@@ -321,11 +378,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(height: 20),
           TextFormField(
             controller: _studentIDController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Mã sinh viên',
-              errorText:
-                  _studentIDIsValid ? null : 'Mã sinh viên không được bỏ trống',
+            decoration: customInputBorder(
+                labelText: 'Mã sinh viên',
+                errorText: _studentIDIsValid ? null : 'Mã sinh viên không được bỏ trống'),
+            style: TextStyle(
+              color: darkMode ? kTextDarkColor : kTextColor,
             ),
             onChanged: (value) {
               if (_studentIDIsValid != _checkStudentIDIsValid(value)) {
@@ -340,10 +397,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(height: 20),
           TextFormField(
             controller: _schoolController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Trường',
-              errorText: _schoolIsValid ? null : 'Trường không được bỏ trống',
+            decoration: customInputBorder(
+                labelText: 'Trường',
+                errorText: _schoolIsValid ? null : 'Trường không được bỏ trống'),
+            style: TextStyle(
+              color: darkMode ? kTextDarkColor : kTextColor,
             ),
             onChanged: (value) {
               if (_schoolIsValid != _checkSchoolsValid(value)) {
@@ -372,7 +430,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: _buildAppbar(context, 'Profile'),
-      backgroundColor: Colors.white,
+      backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.only(left: 10, right: 10, bottom: 30),
@@ -383,23 +441,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 20),
               CircleAvatar(
                 radius: 50,
-                child: Text(
-                  '</>',
-                  style: TextStyle(color: Colors.white, fontSize: 40),
+                child: Icon(
+                  Icons.account_circle,
+                  size: 50,
+                  color: Colors.white,
                 ),
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.green,
               ),
               SizedBox(height: 10),
               Center(
                   child: Text(
                 '${user.firstName ?? 'Không biết'} ${user.lastName ?? ''}',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 19,
+                  color: darkMode ? kTextDarkColor : kTextColor,
+                ),
               )),
               SizedBox(height: 5),
               Center(
                   child: Text(
                 '${user.email ?? 'Chưa cập nhật'}',
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15),
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 15,
+                  color: darkMode ? kTextDarkColor : kTextColor,
+                ),
               )),
               SizedBox(height: 30),
               _viewProfile ? widgetView : widgetEdit,
@@ -488,6 +555,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: darkMode ? kBackgroundDarkColor : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
@@ -516,7 +584,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     return Column(
                       children: <Widget>[
-                        Text(notify.message),
+                        Text(
+                          notify.message,
+                          style: TextStyle(
+                              color: darkMode ? kTextDarkColor : kTextColor),
+                        ),
                         SizedBox(height: 10),
                         FlatButton(
                           child: Text(

@@ -1,12 +1,14 @@
 import 'dart:ui';
 
-import 'package:coding_with_itmc/categories/ui.dart';
 import 'package:coding_with_itmc/components/appbar.dart';
+import 'package:coding_with_itmc/components/list_courses.dart';
 import 'package:coding_with_itmc/lib/shared_preference.dart';
 import 'package:coding_with_itmc/login/login_ui.dart';
 import 'package:coding_with_itmc/models/theme.dart';
 import 'package:coding_with_itmc/profile/profile_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -44,22 +46,58 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
-    
-    
   }
-  
-  Widget _mainWidget(BuildContext context){
+
+  Widget _mainWidget(BuildContext context) {
     return Scaffold(
-//      backgroundColor: Theme.of(context).backgroundColor,
       appBar: _buildAppBar(context, 'iTMC'),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            height: 20,
-          ),
-          Expanded(child: ListCategories()),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+
+            Padding(
+              padding: const EdgeInsets.only(left: 15, top: 10, bottom: 5),
+              child: Text(
+                'Nhập môn lập trình',
+                style: TextStyle(
+                    color: Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
+              ),
+            ),
+            Container(height: 260,
+                child: ListCourses(
+                  courses: listCoursesBasic,
+                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 10, bottom: 5),
+              child: Text(
+                'Lập trình Web',
+                style: TextStyle(
+                    color: Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
+              ),
+            ),
+            Container(height: 260,
+              child: ListCourses(
+                courses: listCoursesWeb,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 10, bottom: 5),
+              child: Text(
+                'Lập trình Mobile',
+                style: TextStyle(
+                    color: Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
+              ),
+            ),
+            Container(height: 260,
+              child: ListCourses(
+                courses: listCoursesMobile,
+              ),
+            ),
+            SizedBox(height: 10),
+          ],
+        ),
       ),
       drawer: _buildDrawer(),
     );
@@ -67,6 +105,14 @@ class HomePageState extends State<HomePage> {
 
   _buildAppBar(BuildContext context, String title) {
     return buildAppbar(context, title: 'iTMC');
+  }
+
+  _gotoProfilePage() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfileScreen()),
+    );
+    setState(() {});
   }
 
   _buildDrawer() {
@@ -82,16 +128,18 @@ class HomePageState extends State<HomePage> {
       accountEmail: Text(user.email,
           style: TextStyle(fontFamily: 'Oswald', fontSize: 16)),
       currentAccountPicture: FlatButton(
-        color: Colors.white,
-        child: Text(user.lastName.substring(0, 1).toUpperCase(),
-            style: TextStyle(fontSize: 40, color: Colors.blue)),
+        color: Colors.green,
+        child: Icon(
+          Icons.account_circle,
+          size: 30,
+          color: Colors.white,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(40),
         ),
         onPressed: () {
           print('Account pressed');
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ProfileScreen()));
+          _gotoProfilePage();
         },
       ),
     );
@@ -99,73 +147,88 @@ class HomePageState extends State<HomePage> {
     var drawerItems = ListView(
       children: <Widget>[
         drawerHeader,
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Icon(
-                  Icons.brightness_6,
-                  color: kPrimaryColor,
+        InkWell(
+          onTap: () {
+            setState(() {
+              darkMode = !darkMode;
+              SharedPreferencesManager.saveDarkModeValue();
+            });
+          },
+          child: Container(
+            height: 40,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Consumer<MyTheme>(
+                builder: (context, theme, child) => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Icon(
+                          Icons.brightness_6,
+                          color: kPrimaryColor,
+                        ),
+                        SizedBox(width: 15),
+                        Text(
+                          'Dark Mode',
+                          style: TextStyle(
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            color: darkMode ? kTextDarkColor : kTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Switch(
+                      value: darkMode,
+                      onChanged: (bool value) {
+                        setState(() {
+                          darkMode = value;
+                          SharedPreferencesManager.saveDarkModeValue();
+                          theme.changeTheme();
+                        });
+                      },
+                    )
+                  ],
                 ),
-                SizedBox(width: 10),
-                Text(
-                  'Dark Mode',
-                  style: TextStyle(
-                    fontFamily: 'Oswald',
-                    fontSize: 17,
-//                    color: darkMode ? kTextDarkColor : kTextColor,
-                  ),
-                ),
-              ],
-            ),
-            Consumer<MyTheme>(
-              builder: (context, theme, child) => Switch(
-                value: darkMode,
-                onChanged: (bool value) {
-                  setState(() {
-                    darkMode = value;
-                    SharedPreferencesManager.saveDarkModeValue();
-                    theme.changeTheme();
-                  });
-                },
               ),
-            )
-          ],
+            ),
+          ),
         ),
         InkWell(
-          splashColor: Colors.red,
           child: Container(
-            child: Row(
-              children: <Widget>[
-                Icon(Icons.timer_off),
-                SizedBox(width: 10),
-                Text(
-                  'Đăng xuất',
-                  style: TextStyle(
-                    fontFamily: 'Oswald',
-                    fontSize: 17,
-//                      color: darkMode ? kTextDarkColor : kTextColor,
+            height: 40,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.timer_off,
+                    color: kPrimaryColor,
                   ),
-                ),
-              ],
+                  SizedBox(width: 15),
+                  Text(
+                    'Đăng xuất',
+                    style: TextStyle(
+                      fontFamily: 'Oswald',
+                      fontSize: 17,
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           onTap: () {
             SharedPreferencesManager.saveUserLogged(false, '', '');
             userLogin.isLogged = false;
 
-//            Navigator.of(context).pop();
-//            Navigator.pushAndRemoveUntil(
-//                context,
-//                MaterialPageRoute(
-//                  builder: (context) => LoginPage(),
-//                ),
-//                (_) => false).then((value) {
-//              setState(() {});
-//            });
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => LoginPage()));
+            Navigator.of(context).pop();
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+                (route) => false);
           },
         ),
       ],
@@ -184,67 +247,84 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-class ListCategories extends StatelessWidget {
-  ListCategories({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: listCategories.length,
-        itemBuilder: (BuildContext context, int index) {
-          return _rowItem(context, index);
-        });
-  }
-
-  Widget _rowItem(BuildContext context, int index) {
-    var size = MediaQuery.of(context).size.width;
-
-    return Card(
-//      color: darkMode ? kCardDarkColor : kCardColor,
-      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-      elevation: 5,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(25),
-//        splashColor: darkMode ? kCardHighlightDarkColor : kCardHighlightColor,
-        onTap: () {
-          _moveToCategory(context, index);
-        },
-        child: ListTile(
-          leading: SizedBox(
-            width: 50,
-            height: 50,
-            child: CircleAvatar(
-              child: listCategories[index].icon,
-              backgroundColor: Colors.blue[50],
-            ),
-          ),
-          title: Text(
-            listCategories[index].title,
-            style: TextStyle(
-                color: darkMode ? kTextDarkColor : kTextColor,
-                fontSize: 18,
-                fontFamily: 'Oswald'),
-          ),
-          subtitle: Text(
-            listCategories[index].numPosts.toString() + " bài học",
-            style: TextStyle(
-                color: darkMode ? kTextSecondaryDarkColor : kTextSecondaryColor,
-                fontSize: 14,
-                fontFamily: 'Oswald',
-                fontWeight: FontWeight.w200),
-          ),
-        ),
-      ),
-    );
-  }
-
-  _moveToCategory(BuildContext context, int index) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ListPostsPage(index),
-      ),
-    );
-  }
-}
+//class ListCategories extends StatelessWidget {
+//
+//  ListCategories({Key key, }) : super(key: key);
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return ListView.builder(
+//        scrollDirection: Axis.horizontal,
+//        itemCount: listCategories.length,
+//        itemBuilder: (BuildContext context, int index) {
+//          return _cardItem(context, index);
+//        });
+//  }
+//
+//  Widget _cardItem(BuildContext context, int index) {
+//    return Padding(
+//      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+//      child: IntroCard(
+//        listCategories[index].backgroundcolor,
+//        listCategories[index].title,
+//        listCategories[index].description,
+//        listCategories[index].numPosts,
+//        listCategories[index].numStudents,
+//        listCategories[index].stars,
+//        () => _moveToCategory(context, index),
+//      ),
+//    );
+//  }
+//
+////  Widget _rowItem(BuildContext context, int index) {
+////    var size = MediaQuery.of(context).size.width;
+////
+////    return Card(
+//////      color: darkMode ? kCardDarkColor : kCardColor,
+////      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+////      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+////      elevation: 5,
+////      child: InkWell(
+////        borderRadius: BorderRadius.circular(25),
+//////        splashColor: darkMode ? kCardHighlightDarkColor : kCardHighlightColor,
+////        onTap: () {
+////          _moveToCategory(context, index);
+////        },
+////        child: ListTile(
+////          leading: SizedBox(
+////            width: 50,
+////            height: 50,
+////            child: CircleAvatar(
+////              child: listCategories[index].icon,
+////              backgroundColor: Colors.blue[50],
+////            ),
+////          ),
+////          title: Text(
+////            listCategories[index].title,
+////            style: TextStyle(
+////                color: darkMode ? kTextDarkColor : kTextColor,
+////                fontSize: 18,
+////                fontFamily: 'Oswald'),
+////          ),
+////          subtitle: Text(
+////            listCategories[index].numPosts.toString() + " bài học",
+////            style: TextStyle(
+////                color: darkMode ? kTextSecondaryDarkColor : kTextSecondaryColor,
+////                fontSize: 14,
+////                fontFamily: 'Oswald',
+////                fontWeight: FontWeight.w200),
+////          ),
+////        ),
+////      ),
+////    );
+////  }
+//
+//  _moveToCategory(BuildContext context, int index) {
+//    Navigator.push(
+//      context,
+//      MaterialPageRoute(
+//        builder: (context) => ListPostsPage(index),
+//      ),
+//    );
+//  }
+//}
