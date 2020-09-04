@@ -1,17 +1,28 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:coding_with_itmc/components/appbar.dart';
+import 'package:coding_with_itmc/components/dialog.dart';
 import 'package:coding_with_itmc/components/input_decoration.dart';
 import 'package:coding_with_itmc/components/rounded_button.dart';
 import 'package:coding_with_itmc/config.dart';
-import 'package:coding_with_itmc/models/notification.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:coding_with_itmc/models/user.dart';
+import 'package:coding_with_itmc/profile/profile_bloc.dart';
+import 'package:coding_with_itmc/profile/profile_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+
+class ProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<ProfileBloc>(
+      create: (context) => ProfileBloc(),
+      child: ProfileScreen(),
+    );
+  }
+}
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -24,25 +35,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _studentIDController,
       _schoolController;
 
-  String _dateOfBirth;
-
-  bool _firstNameIsValid, _lastNameIsValid, _studentIDIsValid, _schoolIsValid;
-
-  bool _viewProfile = true;
-  int _radioGenderValue;
-
   @override
   void initState() {
-    _dateOfBirth = user.dateOfBirth;
-    _radioGenderValue = user.gender;
-    _viewProfile = true;
-    _firstNameIsValid =
-        _lastNameIsValid = _studentIDIsValid = _schoolIsValid = true;
-
     _firstNameController = TextEditingController(text: user.firstName);
     _lastNameController = TextEditingController(text: user.lastName);
     _studentIDController = TextEditingController(text: user.studentID);
     _schoolController = TextEditingController(text: user.school);
+
+    final provider = Provider.of<ProfileBloc>(context, listen: false);
+
+    _firstNameController.addListener(() {
+      provider.firstName = _firstNameController.text.trim();
+      provider.firstNameSink.add(_firstNameController.text);
+    });
+
+    _lastNameController.addListener(() {
+      provider.lastName = _lastNameController.text.trim();
+      provider.lastNameSink.add(_lastNameController.text);
+    });
+
+    _studentIDController.addListener(() {
+      provider.schoolSink.add(_studentIDController.text);
+    });
+
+    _schoolController.addListener(() {
+      provider.schoolSink.add(_schoolController.text);
+    });
 
     super.initState();
   }
@@ -56,201 +74,235 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  bool _checkFirstNameIsValid(String value) {
-    return value != null && value.trim().length > 0;
-  }
-
-  bool _checkLastNameIsValid(String value) {
-    return value != null && value.trim().length > 0;
-  }
-
-  bool _checkStudentIDIsValid(String value) {
-    return value != null && value.trim().length > 0;
-  }
-
-  String convertDateOfBirth(String date) {
-    if (date != null && date.length > 0) {
-      List<String> s = date.split("/");
-      assert(s.length == 3);
-      return s[2] + "-" + s[0] + "-" + s[1];
-    }
-    return null;
-  }
-
-  bool _checkSchoolsValid(String value) {
-    return value != null && value.trim().length > 0;
-  }
-
-  _handleRadioGenderValueChange(int value) {
-    setState(() {
-      _radioGenderValue = value;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    var widgetView = Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          width: 150,
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 2),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.blue,
-                    size: 25,
-                  ),
-                  SizedBox(width: 7),
-                  Text(
-                    'Giới tính :',
-                    style: TextStyle(
-                        fontSize: 18, fontFamily: 'Oswald', color: Colors.blue),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.blue,
-                    size: 25,
-                  ),
-                  SizedBox(width: 7),
-                  Text(
-                    'Ngày sinh :',
-                    style: TextStyle(
-                        fontSize: 18, fontFamily: 'Oswald', color: Colors.blue),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.blue,
-                    size: 25,
-                  ),
-                  SizedBox(width: 7),
-                  Text(
-                    'Mã sinh viên :',
-                    style: TextStyle(
-                        fontSize: 18, fontFamily: 'Oswald', color: Colors.blue),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.blue,
-                    size: 25,
-                  ),
-                  SizedBox(width: 7),
-                  Text(
-                    'Trường học :',
-                    style: TextStyle(
-                        fontSize: 18, fontFamily: 'Oswald', color: Colors.blue),
-                  ),
-                ],
-              ),
-            ],
+    print('rebuild all');
+    final profileBloc = Provider.of<ProfileBloc>(context, listen: false);
+
+    return Scaffold(
+      appBar: _buildAppbar(context, 'Profile', profileBloc),
+      backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.only(left: 10, right: 10, bottom: 30),
+          child: Consumer<ProfileBloc>(
+            builder: (context, model, child) {
+              return model.viewProfile
+                  ? profileViewer()
+                  : profileEditor(profileBloc);
+            },
           ),
         ),
-        Column(
+      ),
+    );
+  }
+
+  _buildAppbar(BuildContext context, String title, ProfileBloc profileBloc) {
+    print('rebuild appbar');
+
+    Widget leading = IconButton(
+      color: Colors.white,
+      icon: Icon(Icons.arrow_back_ios),
+      tooltip: 'Back',
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    List<Widget> listActions = [
+      Consumer<ProfileBloc>(
+        builder: (context, model, child) {
+          if (model.viewProfile) {
+            return Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  tooltip: 'Chỉnh sửa',
+                  onPressed: () {
+                    profileBloc.viewProfile = false;
+                  },
+                ),
+                SizedBox(width: 10)
+              ],
+            );
+          } else {
+            return FlatButton(
+              child: Text(
+                'HỦY',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                profileBloc.viewProfile = true;
+              },
+            );
+          }
+        },
+      ),
+    ];
+    return buildAppbar(context,
+        title: title, leading: leading, actions: listActions);
+  }
+
+  Widget profileViewer() {
+    return Column(
+      children: <Widget>[
+        SizedBox(height: 20),
+        _buildCircleAvatar(),
+        SizedBox(height: 10),
+        _buildFullName(),
+        SizedBox(height: 5),
+        _buildEmail(),
+        SizedBox(height: 30),
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: 2),
-            Text(
-                user.gender == 0
-                    ? 'Nam'
-                    : (user.gender == 1 ? 'Nữ' : 'Không rõ'),
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Oswald',
-                  color: darkMode ? kTextDarkColor : kTextColor,
-                )),
-            SizedBox(height: 20),
-            Text('${user.dateOfBirth ?? 'Chưa cập nhật'}',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Oswald',
-                  color: darkMode ? kTextDarkColor : kTextColor,
-                )),
-            SizedBox(height: 20),
-            Text('${user.studentID ?? 'Chưa cập nhật'}',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Oswald',
-                  color: darkMode ? kTextDarkColor : kTextColor,
-                )),
-            SizedBox(height: 20),
             Container(
-              width: MediaQuery.of(context).size.width - 170,
-              child: Text(
-                '${user.school ?? 'Chưa cập nhật'}',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Oswald',
-                  color: darkMode ? kTextDarkColor : kTextColor,
-                ),
-                overflow: TextOverflow.fade,
+              width: 150,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 2),
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.blue,
+                        size: 25,
+                      ),
+                      SizedBox(width: 7),
+                      Text(
+                        'Giới tính :',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'Oswald',
+                            color: Colors.blue),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.blue,
+                        size: 25,
+                      ),
+                      SizedBox(width: 7),
+                      Text(
+                        'Ngày sinh :',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'Oswald',
+                            color: Colors.blue),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.blue,
+                        size: 25,
+                      ),
+                      SizedBox(width: 7),
+                      Text(
+                        'Mã sinh viên :',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'Oswald',
+                            color: Colors.blue),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.blue,
+                        size: 25,
+                      ),
+                      SizedBox(width: 7),
+                      Text(
+                        'Trường học :',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'Oswald',
+                            color: Colors.blue),
+                      ),
+                    ],
+                  ),
+                ],
               ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 2),
+                Text(
+                    user.gender == 0
+                        ? 'Nam'
+                        : (user.gender == 1 ? 'Nữ' : 'Không rõ'),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Oswald',
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    )),
+                SizedBox(height: 20),
+                Text('${user.dateOfBirth ?? 'Chưa cập nhật'}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Oswald',
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    )),
+                SizedBox(height: 20),
+                Text('${user.studentID ?? 'Chưa cập nhật'}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Oswald',
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    )),
+                SizedBox(height: 20),
+                Container(
+                  width: MediaQuery.of(context).size.width - 170,
+                  child: Text(
+                    '${user.school ?? 'Chưa cập nhật'}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Oswald',
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    ),
+                    overflow: TextOverflow.fade,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ],
     );
+  }
 
-    var widgetEdit = Padding(
+  Widget profileEditor(ProfileBloc profileBloc) {
+    profileBloc.firstNameSink.add(_firstNameController.text);
+    profileBloc.lastNameSink.add(_lastNameController.text);
+    profileBloc.studentIDSink.add(_studentIDController.text);
+    profileBloc.schoolSink.add(_schoolController.text);
+
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 5),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          TextFormField(
-            controller: _firstNameController,
-            decoration: customInputBorder(
-                labelText: 'Họ và tên đệm',
-                errorText: _firstNameIsValid
-                    ? null
-                    : 'Họ và tên đệm không được bỏ trống'),
-            style: TextStyle(
-              color: darkMode ? kTextDarkColor : kTextColor,
-            ),
-            onChanged: (value) {
-              if (_firstNameIsValid != _checkFirstNameIsValid(value)) {
-                setState(() {
-                  _firstNameIsValid = !_firstNameIsValid;
-                });
-              }
-            },
-            textInputAction: TextInputAction.next,
-            onFieldSubmitted: (_) => context.nextEditableTextFocus(),
-          ),
           SizedBox(height: 20),
-          TextFormField(
-            controller: _lastNameController,
-            decoration: customInputBorder(
-                labelText: 'Tên',
-                errorText: _lastNameIsValid ? null : 'Tên đệm không được bỏ trống'),
-            style: TextStyle(
-              color: darkMode ? kTextDarkColor : kTextColor,
-            ),
-            onChanged: (value) {
-              if (_lastNameIsValid != _checkLastNameIsValid(value)) {
-                setState(() {
-                  _lastNameIsValid = !_lastNameIsValid;
-                });
-              }
-            },
-            textInputAction: TextInputAction.next,
-            onFieldSubmitted: (_) => context.nextEditableTextFocus(),
-          ),
+          _buildCircleAvatar(),
+          SizedBox(height: 10),
+          _buildFullName(),
+          SizedBox(height: 5),
+          _buildEmail(),
+          SizedBox(height: 30),
+          _buildFirstNameInput(profileBloc.firstNameStream),
+          SizedBox(height: 20),
+          _buildLastNameInput(profileBloc.lastNameStream),
           SizedBox(height: 20),
           Align(
             alignment: Alignment.topLeft,
@@ -263,409 +315,338 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          Wrap(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Theme(
-                    data: ThemeData(
-                      unselectedWidgetColor: Colors.blue,
-                    ),
-                    child: Radio(
-                      value: 0,
-                      groupValue: _radioGenderValue,
-                      onChanged: _handleRadioGenderValueChange,
-                    ),
-                  ),
-                  Text(
-                    'Nam',
-                    style: TextStyle(
-                      color: darkMode ? kTextDarkColor : kTextColor,
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Theme(
-                    data: ThemeData(
-                      unselectedWidgetColor: Colors.blue,
-                    ),
-                    child: Radio(
-                      value: 1,
-                      groupValue: _radioGenderValue,
-                      onChanged: _handleRadioGenderValueChange,
-                    ),
-                  ),
-                  Text(
-                    'Nữ',
-                    style: TextStyle(
-                      color: darkMode ? kTextDarkColor : kTextColor,
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Theme(
-                    data: ThemeData(
-                      unselectedWidgetColor: Colors.blue,
-                    ),
-                    child: Radio(
-                      value: 2,
-                      groupValue: _radioGenderValue,
-                      onChanged: _handleRadioGenderValueChange,
-                    ),
-                  ),
-                  Text(
-                    'Không rõ',
-                    style: TextStyle(
-                      color: darkMode ? kTextDarkColor : kTextColor,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              SizedBox(width: 4),
-              Text(
-                'Ngày sinh:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: darkMode ? kTextDarkColor : kTextColor,
-                ),
-              ),
-              SizedBox(width: 20),
-              Container(
-                width: 100,
-                child: Text(
-                  '$_dateOfBirth',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: darkMode ? kTextDarkColor : kTextColor,
-                  ),
-                ),
-              ),
-              FlatButton(
-                child: Icon(
-                  Icons.date_range,
-                  color: Colors.blue,
-                  size: 30,
-                ),
-                onPressed: () {
-                  showDatePicker(
-                          context: context,
-                          initialDate: DateTime.utc(2000, 1, 1),
-                          firstDate: DateTime(1980),
-                          lastDate: DateTime.now())
-                      .then((value) {
-                    if (value != null) {
-                      print('Date selected: $value');
-
-                      setState(() {
-                        _dateOfBirth = (value.day < 10 ? '0' : '') +
-                            value.day.toString() +
-                            '/' +
-                            (value.month < 10 ? '0' : '') +
-                            value.month.toString() +
-                            '/' +
-                            value.year.toString();
-                      });
-                    }
-                  });
-                },
-              )
-            ],
-          ),
+          _buildGenderSelect(),
+          _buildDateOfBirthSelect(context, profileBloc),
           SizedBox(height: 20),
-          TextFormField(
-            controller: _studentIDController,
-            decoration: customInputBorder(
-                labelText: 'Mã sinh viên',
-                errorText: _studentIDIsValid ? null : 'Mã sinh viên không được bỏ trống'),
-            style: TextStyle(
-              color: darkMode ? kTextDarkColor : kTextColor,
-            ),
-            onChanged: (value) {
-              if (_studentIDIsValid != _checkStudentIDIsValid(value)) {
-                setState(() {
-                  _studentIDIsValid = !_studentIDIsValid;
-                });
-              }
-            },
-            textInputAction: TextInputAction.next,
-            onFieldSubmitted: (_) => context.nextEditableTextFocus(),
-          ),
+          _buildStudentIDInput(profileBloc.studentIDStream),
           SizedBox(height: 20),
-          TextFormField(
-            controller: _schoolController,
-            decoration: customInputBorder(
-                labelText: 'Trường',
-                errorText: _schoolIsValid ? null : 'Trường không được bỏ trống'),
-            style: TextStyle(
-              color: darkMode ? kTextDarkColor : kTextColor,
-            ),
-            onChanged: (value) {
-              if (_schoolIsValid != _checkSchoolsValid(value)) {
-                setState(() {
-                  _schoolIsValid = !_schoolIsValid;
-                });
-              }
-            },
-            textInputAction: TextInputAction.done,
-            onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
-          ),
+          _buildSchoolInput(profileBloc.schoolStream),
           SizedBox(height: 30),
-          RoundedButton(
-            text: 'Chỉnh sửa',
-            textColor: Colors.white,
-            backgroundColor: Colors.blueAccent,
-            borderColor: Colors.white,
-            onPressed: () {
-              _updateProfile();
-            },
-          ),
+          _buildButtonUpdateProfile(profileBloc),
           SizedBox(height: 30),
         ],
       ),
     );
+  }
 
-    return Scaffold(
-      appBar: _buildAppbar(context, 'Profile'),
-      backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.only(left: 10, right: 10, bottom: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              SizedBox(height: 20),
-              CircleAvatar(
-                radius: 50,
-                child: Icon(
-                  Icons.account_circle,
-                  size: 50,
-                  color: Colors.white,
-                ),
-                backgroundColor: Colors.green,
-              ),
-              SizedBox(height: 10),
-              Center(
-                  child: Text(
-                '${user.firstName ?? 'Không biết'} ${user.lastName ?? ''}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 19,
-                  color: darkMode ? kTextDarkColor : kTextColor,
-                ),
-              )),
-              SizedBox(height: 5),
-              Center(
-                  child: Text(
-                '${user.email ?? 'Chưa cập nhật'}',
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontSize: 15,
-                  color: darkMode ? kTextDarkColor : kTextColor,
-                ),
-              )),
-              SizedBox(height: 30),
-              _viewProfile ? widgetView : widgetEdit,
-            ],
+  _showDialog(ProfileBloc profileBloc) async {
+    showDialogLoading(context, 'Cập nhật');
+
+    _firstNameController.text = _firstNameController.text.trim();
+    _lastNameController.text = _lastNameController.text.trim();
+    _studentIDController.text =
+        _studentIDController.text.replaceAll(RegExp(' +'), '').trim();
+    _schoolController.text =
+        _schoolController.text.replaceAll(RegExp('  '), ' ').trim();
+
+    final updateResult = await ProfileModel().requestUpdateProfile(
+        _firstNameController.text,
+        _lastNameController.text,
+        profileBloc.radioGenderValue == 0
+            ? 'male'
+            : (profileBloc.radioGenderValue == 1 ? 'female' : 'other'),
+        profileBloc.dateOfBirth,
+        _studentIDController.text,
+        _schoolController.text,
+        'http://icon.gg');
+    Navigator.pop(context, true);
+
+    if (updateResult.code == 200) {
+      user = new User.copy(
+          user.email,
+          user.pass,
+          _firstNameController.text,
+          _lastNameController.text,
+          profileBloc.dateOfBirth,
+          profileBloc.radioGenderValue,
+          _studentIDController.text,
+          _schoolController.text,
+          user.gravatar);
+      Function press = () {
+        Navigator.pop(context, true);
+        profileBloc.viewProfile = true;
+        print('view');
+      };
+      showDialogNotification(context, 'Cập nhật', updateResult, press: press);
+    } else {
+      showDialogNotification(context, 'Cập nhật', updateResult);
+    }
+  }
+
+  _buildCircleAvatar() {
+    return Container(
+      width: 150.0,
+      height: 150.0,
+      decoration: new BoxDecoration(
+        shape: BoxShape.circle,
+        image: new DecorationImage(
+          fit: BoxFit.fill,
+          image: AssetImage(
+            'assets/images/avatar.jpg',
           ),
         ),
       ),
     );
   }
 
-  _buildAppbar(BuildContext context, String title) {
-    Widget leading = IconButton(
-      color: Colors.white,
-      icon: Icon(Icons.arrow_back_ios),
-      tooltip: 'Back',
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
+  _buildFullName() {
+    return Center(
+      child: Consumer<ProfileBloc>(
+        builder: (context, model, child) {
+          return Text(
+            '${model.firstName} ${model.lastName}',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 19,
+              color: darkMode ? kTextDarkColor : kTextColor,
+              fontFamily: 'Oswald',
+            ),
+          );
+        },
+      ),
     );
-    List<Widget> listActions = [
-      _viewProfile
-          ? Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  tooltip: 'Chỉnh sửa',
-                  onPressed: () {
-                    print('Edit profile');
-                    setState(() {
-                      _viewProfile = false;
-                    });
-                  },
-                ),
-                SizedBox(width: 10)
-              ],
-            )
-          : FlatButton(
-              child: Text(
-                'HỦY',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                setState(() {
-                  _viewProfile = true;
-                });
-              },
-            )
-    ];
-    return buildAppbar(context,
-        title: title, leading: leading, actions: listActions);
   }
 
-  _updateProfile() {
-    setState(() {
-      if (_studentIDController.text == null ||
-          _studentIDController.text.trim().length == 0)
-        _studentIDIsValid = false;
-      if (_schoolController.text == null ||
-          _schoolController.text.trim().length == 0) _schoolIsValid = false;
-      if (_firstNameController.text == null ||
-          _firstNameController.text.trim().length == 0)
-        _firstNameIsValid = false;
-      if (_lastNameController.text == null ||
-          _lastNameController.text.trim().length == 0) _lastNameIsValid = false;
-    });
-    bool isValid = _studentIDIsValid &&
-        _schoolIsValid &&
-        _firstNameIsValid &&
-        _lastNameIsValid;
-    if (isValid) {
-      _firstNameController.text =
-          _firstNameController.text.replaceAll(RegExp(' +'), ' ').trim();
-      _lastNameController.text =
-          _lastNameController.text.replaceAll(RegExp(' +'), ' ').trim();
-      _studentIDController.text =
-          _studentIDController.text.replaceAll(RegExp(' '), '');
-      _schoolController.text =
-          _schoolController.text.replaceAll(RegExp(' +'), ' ').trim();
-      _showDialogUpdateProfile(context);
-    }
+  _buildEmail() {
+    return Center(
+        child: Text(
+      '${user.email ?? 'Chưa cập nhật'}',
+      style: TextStyle(
+        fontStyle: FontStyle.italic,
+        fontSize: 15,
+        color: darkMode ? kTextDarkColor : kTextColor,
+      ),
+    ));
   }
 
-  Future<void> _showDialogUpdateProfile(BuildContext context) async {
-    showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: darkMode ? kBackgroundDarkColor : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+  _buildFirstNameInput(firstNameStream) {
+    return StreamBuilder<String>(
+      stream: firstNameStream,
+      builder: (_, snapshot) {
+        return TextFormField(
+          controller: _firstNameController,
+          decoration: customInputBorder(
+              labelText: 'Họ và tên đệm',
+              hintText: 'Ví dụ: Nguyễn Văn',
+              errorText: snapshot.data),
+          style: TextStyle(
+            color: darkMode ? kTextDarkColor : kTextColor,
           ),
-          title: Center(
-              child: Text(
-            'Cập nhật',
-            style: TextStyle(color: Colors.indigo, fontSize: 22),
-          )),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              FutureBuilder<Notify>(
-                future: _requestUpdateProfile(
-                    _firstNameController.text,
-                    _lastNameController.text,
-                    _radioGenderValue == 0
-                        ? 'male'
-                        : (_radioGenderValue == 1 ? 'female' : 'other'),
-                    _dateOfBirth,
-                    _studentIDController.text.trim(),
-                    _schoolController.text.trim(),
-                    'http://icon.gg'),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    Notify notify = snapshot.data;
-
-                    return Column(
-                      children: <Widget>[
-                        Text(
-                          notify.message,
-                          style: TextStyle(
-                              color: darkMode ? kTextDarkColor : kTextColor),
-                        ),
-                        SizedBox(height: 10),
-                        FlatButton(
-                          child: Text(
-                            'OK',
-                            style: TextStyle(color: Colors.blue, fontSize: 18),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop('OK');
-                          },
-                        ),
-                      ],
-                    );
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
-              ),
-            ],
-          ),
+          textInputAction: TextInputAction.next,
+          onFieldSubmitted: (_) => context.nextEditableTextFocus(),
         );
       },
-    ).then((value) {
-      if (value.compareTo('OK') == 0) {
-        setState(() {
-          _viewProfile = true;
-        });
-      }
-    });
+    );
   }
 
-  Future<Notify> _requestUpdateProfile(
-      String firstName,
-      String lastName,
-      String gender,
-      String dateOfBirth,
-      String studentID,
-      String school,
-      String gravatar) async {
-    try {
-      final http.Response response = await http.post(
-        urlUserProfile,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(<String, String>{
-          'firstName': firstName,
-          'lastName': lastName,
-          'gender': gender,
-          'dateOfBirth': dateOfBirth,
-          'studentID': studentID,
-          'school': school,
-          'gravatar': gravatar,
-        }),
-      );
+  _buildLastNameInput(lastNameStream) {
+    return StreamBuilder<String>(
+      stream: lastNameStream,
+      builder: (_, snapshot) {
+        return TextFormField(
+          controller: _lastNameController,
+          decoration: customInputBorder(
+              labelText: 'Tên',
+              hintText: 'Ví dụ: An',
+              errorText: snapshot.data),
+          style: TextStyle(
+            color: darkMode ? kTextDarkColor : kTextColor,
+          ),
+          textInputAction: TextInputAction.done,
+          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+        );
+      },
+    );
+  }
 
-      if (response.statusCode == 200) {
-        user.convert(json.decode(response.body)['data']);
-        print('Updated successfully');
-        return Notify(response.statusCode, 'Cập nhật thành công!');
-      } else if (response.statusCode == 400) {
-        String mess = "";
-        var list = json.decode(response.body)['error']['descriptions'];
-        for (String s in list) {
-          mess += s + "\n";
-        }
-        return Notify(response.statusCode, mess);
-      } else if (response.statusCode == 401) {
-        return Notify(response.statusCode, 'Unauthorized');
-      } else {
-        return Notify(response.statusCode, 'Có lỗi xảy ra');
-      }
-    } catch (e) {
-      print('error: $e');
-      return Notify(-1, 'Có lỗi xảy ra!');
-    }
+  _buildStudentIDInput(studentIDStream) {
+    return StreamBuilder<String>(
+      stream: studentIDStream,
+      builder: (_, snapshot) {
+        return TextFormField(
+          controller: _studentIDController,
+          decoration: customInputBorder(
+              labelText: 'Mã sinh viên',
+              hintText: 'Ví dụ: N18DCCN246',
+              errorText: snapshot.data),
+          style: TextStyle(
+            color: darkMode ? kTextDarkColor : kTextColor,
+          ),
+          textInputAction: TextInputAction.done,
+          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+        );
+      },
+    );
+  }
+
+  _buildSchoolInput(schoolStream) {
+    return StreamBuilder<String>(
+      stream: schoolStream,
+      builder: (_, snapshot) {
+        return TextFormField(
+          controller: _schoolController,
+          decoration: customInputBorder(
+              labelText: 'Trường',
+              hintText: 'Ví dụ: Học viện Công nghệ Bưu chính Viễn Thông',
+              errorText: snapshot.data),
+          style: TextStyle(
+            color: darkMode ? kTextDarkColor : kTextColor,
+          ),
+          textInputAction: TextInputAction.done,
+          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+        );
+      },
+    );
+  }
+
+  _buildDateOfBirthSelect(BuildContext context, ProfileBloc profileBloc) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(left: 4.0),
+          child: Text(
+            'Ngày sinh:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: darkMode ? kTextDarkColor : kTextColor,
+            ),
+          ),
+        ),
+        Consumer<ProfileBloc>(
+          builder: (context, model, child) {
+            return Text(
+              '${model.dateOfBirth}',
+              style: TextStyle(
+                fontSize: 16,
+                color: darkMode ? kTextDarkColor : kTextColor,
+              ),
+            );
+          },
+        ),
+        FlatButton(
+          child: Icon(
+            Icons.date_range,
+            color: Colors.blue,
+            size: 30,
+          ),
+          onPressed: () {
+            List<String> date = profileBloc.dateOfBirth.split('/');
+
+            showDatePicker(
+                    context: context,
+                    initialDate: DateTime.utc(
+                        int.tryParse(date[2]),
+                        int.parse(date[1]),
+                        int.tryParse(date[0])), // yyyy-mm-dd
+                    firstDate: DateTime(1980),
+                    lastDate: DateTime.now())
+                .then((value) {
+              if (value != null) {
+                print('Date selected: $value');
+
+                profileBloc.dateOfBirth = (value.day < 10 ? '0' : '') +
+                    value.day.toString() +
+                    '/' +
+                    (value.month < 10 ? '0' : '') +
+                    value.month.toString() +
+                    '/' +
+                    value.year.toString();
+              }
+            });
+          },
+        )
+      ],
+    );
+  }
+
+  _buildGenderSelect() {
+    return Wrap(
+      children: <Widget>[
+        Consumer<ProfileBloc>(
+          builder: (context, model, child) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.blue,
+                  ),
+                  child: Radio(
+                    value: 0,
+                    groupValue: model.radioGenderValue,
+                    onChanged: (value) => model.radioGenderValue = 0,
+                  ),
+                ),
+                Text(
+                  'Nam',
+                  style: TextStyle(
+                    color: darkMode ? kTextDarkColor : kTextColor,
+                  ),
+                ),
+                SizedBox(width: 20),
+                Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.blue,
+                  ),
+                  child: Radio(
+                    value: 1,
+                    groupValue: model.radioGenderValue,
+                    onChanged: (value) => model.radioGenderValue = 1,
+                  ),
+                ),
+                Text(
+                  'Nữ',
+                  style: TextStyle(
+                    color: darkMode ? kTextDarkColor : kTextColor,
+                  ),
+                ),
+                SizedBox(width: 20),
+                Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.blue,
+                  ),
+                  child: Radio(
+                    value: 2,
+                    groupValue: model.radioGenderValue,
+                    onChanged: (value) => model.radioGenderValue = 2,
+                  ),
+                ),
+                Text(
+                  'Không rõ',
+                  style: TextStyle(
+                    color: darkMode ? kTextDarkColor : kTextColor,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  _buildButtonUpdateProfile(ProfileBloc profileBloc) {
+    return StreamBuilder<bool>(
+      stream: profileBloc.btnStream,
+      builder: (context, snapshot) {
+        return RoundedButton(
+          text: 'Chỉnh sửa',
+          textColor: Colors.white,
+          backgroundColor:
+              snapshot.data == true ? Colors.blueAccent : Colors.grey,
+          borderColor: Colors.white,
+          onPressed: () {
+            if (snapshot.data != true) return;
+
+            print('Update profile v2');
+            _showDialog(profileBloc);
+          },
+        );
+      },
+    );
   }
 }
 

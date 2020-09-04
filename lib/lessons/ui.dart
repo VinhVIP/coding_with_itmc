@@ -5,19 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class ListPostsPage extends StatelessWidget {
-  final int categoryIndex;
+  final String courseName;
+  final int courseID;
 
-  ListPostsPage(this.categoryIndex);
+  ListPostsPage(this.courseName, this.courseID);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(context, listCoursesBasic[categoryIndex].title),
+      appBar: _buildAppBar(context, courseName),
 //      backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Expanded(child: ListPosts(categoryIndex)),
+          Expanded(child: ListPosts(courseID)),
         ],
       ),
     );
@@ -37,17 +38,30 @@ class ListPostsPage extends StatelessWidget {
 }
 
 class ListPosts extends StatelessWidget {
-  final int categoryIndex;
+  final int courseID;
 
-  ListPosts(this.categoryIndex);
+  ListPosts(this.courseID);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: listLessons[categoryIndex].length,
+    if (listLessons[courseID].length > 0) {
+      return ListView.builder(
+        itemCount: listLessons[courseID].length,
         itemBuilder: (BuildContext context, int index) {
           return _rowItem(context, index);
-        });
+        },
+      );
+    } else {
+      return Center(
+        child: Text(
+          'Hiện chưa có bài học nào!',
+          style: TextStyle(
+              color: darkMode ? kTextDarkColor : kTextColor,
+              fontSize: 17,
+              fontFamily: 'Oswald'),
+        ),
+      );
+    }
   }
 
   Widget _test(BuildContext context) {
@@ -91,7 +105,7 @@ class ListPosts extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => PostPage(categoryIndex, index)));
+                  builder: (context) => PostPage(courseID, index)));
         },
         child: ListTile(
           leading: SizedBox(
@@ -107,7 +121,7 @@ class ListPosts extends StatelessWidget {
             ),
           ),
           title: Text(
-            listLessons[categoryIndex][index].title,
+            listLessons[courseID][index].title,
             style: TextStyle(
                 color: darkMode ? kTextDarkColor : kTextColor,
                 fontSize: 17,

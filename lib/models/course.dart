@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 class Course{
   int id;
   Color _backgroundColor;
-  String _title;
+  String _name;
   String _description;
   int _numPosts;
   int _numStudents;
-  double _stars;
+  double _rating;
 
 
-  Course(this.id, this._backgroundColor, this._title, this._description, this._numPosts,
-      this._numStudents, this._stars);
+  Course(this.id, this._backgroundColor, this._name, this._description, this._numPosts,
+      this._numStudents, this._rating);
 
-  double get stars => _stars;
+  double get rating => _rating;
 
   int get numStudents => _numStudents;
 
@@ -23,7 +23,6 @@ class Course{
 
   Color get backgroundColor => _backgroundColor;
 
-  String get title => _title;
+  String get name => _name;
 
-  Color get backgroundcolor => _backgroundColor;
 }

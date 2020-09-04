@@ -1,11 +1,10 @@
-import 'package:coding_with_itmc/categories/ui.dart';
+import 'package:coding_with_itmc/lessons/ui.dart';
 import 'package:coding_with_itmc/models/course.dart';
 import 'package:flutter/material.dart';
 
-import 'intro_card.dart';
+import 'course_card.dart';
 
 class ListCourses extends StatelessWidget {
-
   final List<Course> courses;
 
   ListCourses({Key key, this.courses}) : super(key: key);
@@ -23,17 +22,18 @@ class ListCourses extends StatelessWidget {
   Widget _cardItem(BuildContext context, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: IntroCard(
-        courses[index].backgroundcolor,
-        courses[index].title,
+      child: CourseCard(
+        courses[index].backgroundColor,
+        courses[index].name,
         courses[index].description,
         courses[index].numPosts,
         courses[index].numStudents,
-        courses[index].stars,
+        courses[index].rating,
         () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ListPostsPage(index),
+            builder: (context) =>
+                ListPostsPage(courses[index].name, courses[index].id),
           ),
         ),
       ),

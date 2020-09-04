@@ -9,8 +9,9 @@ class User {
   String school;
   String gravatar;
 
-  User(
-      {this.email,
+  User();
+
+  User.copy(this.email,
       this.pass,
       this.firstName,
       this.lastName,
@@ -18,7 +19,7 @@ class User {
       this.gender,
       this.studentID,
       this.school,
-      this.gravatar});
+      this.gravatar);
 
   convert(Map<String, dynamic> json) {
     firstName = json['firstName'] ?? null;

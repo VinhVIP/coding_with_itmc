@@ -55,7 +55,6 @@ class HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-
             Padding(
               padding: const EdgeInsets.only(left: 15, top: 10, bottom: 5),
               child: Text(
@@ -64,10 +63,11 @@ class HomePageState extends State<HomePage> {
                     color: Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
               ),
             ),
-            Container(height: 260,
-                child: ListCourses(
-                  courses: listCoursesBasic,
-                ),
+            Container(
+              height: 260,
+              child: ListCourses(
+                courses: listCoursesBasic,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 12, top: 10, bottom: 5),
@@ -77,7 +77,8 @@ class HomePageState extends State<HomePage> {
                     color: Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
               ),
             ),
-            Container(height: 260,
+            Container(
+              height: 260,
               child: ListCourses(
                 courses: listCoursesWeb,
               ),
@@ -90,7 +91,8 @@ class HomePageState extends State<HomePage> {
                     color: Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
               ),
             ),
-            Container(height: 260,
+            Container(
+              height: 260,
               child: ListCourses(
                 courses: listCoursesMobile,
               ),
@@ -110,7 +112,7 @@ class HomePageState extends State<HomePage> {
   _gotoProfilePage() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ProfileScreen()),
+      MaterialPageRoute(builder: (context) => ProfilePage()),
     );
     setState(() {});
   }
@@ -121,32 +123,38 @@ class HomePageState extends State<HomePage> {
         color: kPrimaryColor,
       ),
       accountName: Text(
-        user.firstName + " " + user.lastName,
+        "${user.firstName} ${user.lastName}",
         style: TextStyle(
             fontFamily: 'Oswald', fontWeight: FontWeight.bold, fontSize: 17),
       ),
-      accountEmail: Text(user.email,
+      accountEmail: Text("${user.email}",
           style: TextStyle(fontFamily: 'Oswald', fontSize: 16)),
-      currentAccountPicture: FlatButton(
-        color: Colors.green,
-        child: Icon(
-          Icons.account_circle,
-          size: 30,
-          color: Colors.white,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40),
-        ),
-        onPressed: () {
-          print('Account pressed');
+      currentAccountPicture: InkWell(
+        onTap: () {
           _gotoProfilePage();
         },
+        child: Container(
+          decoration: new BoxDecoration(
+            shape: BoxShape.circle,
+            image: new DecorationImage(
+              fit: BoxFit.fill,
+              image: AssetImage(
+                'assets/images/avatar.jpg',
+              ),
+            ),
+          ),
+        ),
       ),
     );
 
     var drawerItems = ListView(
       children: <Widget>[
-        drawerHeader,
+        InkWell(
+            onTap: () {
+              _gotoProfilePage();
+            },
+            child: drawerHeader,
+        ),
         InkWell(
           onTap: () {
             setState(() {

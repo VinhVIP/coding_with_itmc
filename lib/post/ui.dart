@@ -33,7 +33,7 @@ class _PostPageState extends State<PostPage> {
     );
     _kTabPages[1] = PageChoice(
       key: PageStorageKey('PageChoice'),
-      categoryIndex: categoryIndex,
+      courseID: categoryIndex,
       postIndex: postIndex,
     );
   }
@@ -135,15 +135,15 @@ class PageLesson extends StatelessWidget {
 }
 
 class PageChoice extends StatelessWidget {
-  final int categoryIndex, postIndex;
+  final int courseID, postIndex;
 
-  PageChoice({Key key, this.categoryIndex, this.postIndex}) : super(key: key);
+  PageChoice({Key key, this.courseID, this.postIndex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
       future:
-          getFileChoiceContent(listLessons[categoryIndex][postIndex].pathChoice),
+          getFileChoiceContent(listLessons[courseID][postIndex].pathChoice),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {

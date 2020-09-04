@@ -3,16 +3,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class IntroCard extends StatelessWidget {
+class CourseCard extends StatelessWidget {
 
   Color kBackground;
-  String title, description;
+  String name, description;
   int numLessons, numStudents;
-  double stars;
+  double rating;
   Function tap;
 
-  IntroCard(this.kBackground, this.title, this.description, this.numLessons,
-      this.numStudents, this.stars, this.tap);
+  CourseCard(this.kBackground, this.name, this.description, this.numLessons,
+      this.numStudents, this.rating, this.tap);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class IntroCard extends StatelessWidget {
               width: 220,
               height: 100,
               color: kBackground,
-              child: Center(child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25, fontFamily: 'Oswald'), )),
+              child: Center(child: Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25, fontFamily: 'Oswald'), )),
             ),
             Container(
               width: 220,
@@ -57,15 +57,7 @@ class IntroCard extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 5),
-                        Row(
-                          children: <Widget>[
-                            Icon(Icons.star, color: Colors.yellow, size: 18,),
-                            Icon(Icons.star, color: Colors.yellow, size: 18,),
-                            Icon(Icons.star, color: Colors.yellow, size: 18,),
-                            Icon(Icons.star_half, color: Colors.yellow, size: 18,),
-                            Icon(Icons.star_border, color: Colors.grey, size: 18,),
-                          ],
-                        ),
+                        _buildRatingStar(),
                       ],
                     ),
                   ],
@@ -75,6 +67,16 @@ class IntroCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  _buildRatingStar(){
+    int stars = rating.toInt();
+    return Row(
+      children: <Widget>[
+        for(int i=0; i<stars; i++) Icon(Icons.star,  color: Colors.yellow, size: 18,),
+        for(int i=stars; i<5; i++) Icon(Icons.star_border, color: Colors.grey, size: 18,),
+      ],
     );
   }
 }

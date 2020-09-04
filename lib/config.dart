@@ -103,6 +103,8 @@ final List<Lesson> listLessonsJava = [
       'assets/data/posts/cpp_beginner/bai2_tn.md'),
 ];
 
+final List<Lesson> listLessonsEmpty = [];
+
 final List<Course> listCoursesBasic = [
   Course(
     100,
@@ -111,7 +113,7 @@ final List<Course> listCoursesBasic = [
       'Khóa học C++ cơ bản, tạo nền tảng lập trình cho người mới bắt đầu học.',
       listLessonsCppBeginner.length,
       48,
-      4.2),
+      5),
   Course(
     101,
       Colors.blue,
@@ -119,7 +121,7 @@ final List<Course> listCoursesBasic = [
       'Khóa học Java cơ bản, tạo nền tảng lập trình cho android + backend web',
       listLessonsJava.length,
       24,
-      4.2),
+      4),
 ];
 
 final List<Course> listCoursesWeb = [
@@ -130,7 +132,7 @@ final List<Course> listCoursesWeb = [
       'Xây dựng giao diện website của bạn.',
       0,
       0,
-      4.2),
+      4),
 ];
 
 final List<Course> listCoursesMobile = [
@@ -141,15 +143,15 @@ final List<Course> listCoursesMobile = [
       'Lập trình ứng dụng di động Android cơ bản.',
       0,
       0,
-      4.2),
+      5),
   Course(
     301,
       Colors.pinkAccent,
-      'Ios',
+      'IOS',
       'Thử sức với Ios, tại sao không?',
       0,
       0,
-      4.2),
+      2),
   Course(
     302,
       Colors.yellow,
@@ -157,13 +159,20 @@ final List<Course> listCoursesMobile = [
       'Xây dựng app đa nền tảng bao gồm andorid, ios và cả web app.',
       0,
       0,
-      4.2),
+      4),
 ];
 
 Map<int, List<Lesson>> listLessons = new Map();
 
 class InitData {
   void loadData() {
-    listLessons = {0: listLessonsCppBeginner, 1: listLessonsJava};
+    listLessons = {
+      listCoursesBasic[0].id: listLessonsCppBeginner,
+      listCoursesBasic[1].id: listLessonsJava,
+      listCoursesWeb[0].id : listLessonsEmpty,
+      listCoursesMobile[0].id : listLessonsEmpty,
+      listCoursesMobile[1].id : listLessonsEmpty,
+      listCoursesMobile[2].id : listLessonsEmpty,
+    };
   }
 }

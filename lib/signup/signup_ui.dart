@@ -1,7 +1,8 @@
 import 'package:coding_with_itmc/components/appbar.dart';
+import 'package:coding_with_itmc/components/dialog.dart';
 import 'package:coding_with_itmc/components/input_decoration.dart';
 import 'package:coding_with_itmc/components/rounded_button.dart';
-import 'package:coding_with_itmc/models/notification.dart';
+import 'package:coding_with_itmc/models/user.dart';
 import 'package:coding_with_itmc/signup/signup_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,22 +51,26 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     super.initState();
 
     emailController.addListener(() {
-      Provider.of<SignUpBloc>(context, listen: false)
+      Provider
+          .of<SignUpBloc>(context, listen: false)
           .emailSink
           .add(emailController.text);
     });
     passController.addListener(() {
-      Provider.of<SignUpBloc>(context, listen: false)
+      Provider
+          .of<SignUpBloc>(context, listen: false)
           .passSink
           .add(passController.text);
     });
     firstNameController.addListener(() {
-      Provider.of<SignUpBloc>(context, listen: false)
+      Provider
+          .of<SignUpBloc>(context, listen: false)
           .firstNameSink
           .add(firstNameController.text);
     });
     lastNameController.addListener(() {
-      Provider.of<SignUpBloc>(context, listen: false)
+      Provider
+          .of<SignUpBloc>(context, listen: false)
           .lastNameSink
           .add(lastNameController.text);
     });
@@ -141,7 +146,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       builder: (_, snapshot) {
         return TextFormField(
           controller: emailController,
-          decoration: customInputBorder(labelText: 'Email', hintText: 'Ví dụ: nguyenvanan@gmail.com', errorText: snapshot.data),
+          decoration: customInputBorder(labelText: 'Email',
+              hintText: 'Ví dụ: nguyenvanan@gmail.com',
+              errorText: snapshot.data),
           style: TextStyle(
             color: darkMode ? kTextDarkColor : kTextColor,
           ),
@@ -160,7 +167,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
         return TextFormField(
           controller: passController,
           obscureText: true,
-          decoration: customInputBorder(labelText: 'Mật khẩu', errorText: snapshot.data),
+          decoration: customInputBorder(
+              labelText: 'Mật khẩu', errorText: snapshot.data),
           style: TextStyle(
             color: darkMode ? kTextDarkColor : kTextColor,
           ),
@@ -177,7 +185,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       builder: (_, snapshot) {
         return TextFormField(
           controller: firstNameController,
-          decoration: customInputBorder(labelText: 'Họ và tên đệm', hintText: 'Ví dụ: Nguyễn Văn', errorText: snapshot.data),
+          decoration: customInputBorder(labelText: 'Họ và tên đệm',
+              hintText: 'Ví dụ: Nguyễn Văn',
+              errorText: snapshot.data),
           style: TextStyle(
             color: darkMode ? kTextDarkColor : kTextColor,
           ),
@@ -194,7 +204,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       builder: (_, snapshot) {
         return TextFormField(
           controller: lastNameController,
-          decoration: customInputBorder(labelText: 'Tên', hintText: 'Ví dụ: An', errorText: snapshot.data),
+          decoration: customInputBorder(labelText: 'Tên',
+              hintText: 'Ví dụ: An',
+              errorText: snapshot.data),
           style: TextStyle(
             color: darkMode ? kTextDarkColor : kTextColor,
           ),
@@ -207,86 +219,43 @@ class _SignUpWidgetState extends State<SignUpWidget> {
 
   _buildButtonSignUp(signUpBloc) {
     return StreamBuilder<bool>(
-        stream: signUpBloc.btnStream,
-        builder: (context, snapshot) {
-          return RoundedButton(
-            text: 'Đăng ký',
-            textColor: Colors.white,
-            backgroundColor:
-                snapshot.data == true ? Colors.blueAccent : Colors.grey,
-            borderColor: Colors.white,
-            onPressed: () {
-              if (snapshot.data != true) return;
+      stream: signUpBloc.btnStream,
+      builder: (context, snapshot) {
+        return RoundedButton(
+          text: 'Đăng ký',
+          textColor: Colors.white,
+          backgroundColor:
+          snapshot.data == true ? Colors.blueAccent : Colors.grey,
+          borderColor: Colors.white,
+          onPressed: () {
+            if (snapshot.data != true) return;
 
-              print('SignUp v2');
-              _showDialogSignUp(context, signUpBloc);
-            },
-          );
-        });
+            print('SignUp v2');
+            _showDialog(signUpBloc);
+          },
+        );
+      },);
   }
 
-  _showDialogSignUp(BuildContext context, SignUpBloc signUpBloc) async {
-    showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: darkMode ? kBackgroundDarkColor : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          title: Center(
-              child: Text(
-            'Đăng ký',
-            style: TextStyle(color: Colors.indigo, fontSize: 22),
-          )),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              FutureBuilder<Notify>(
-                future: signUpBloc.doSignUp(
-                    emailController.text,
-                    passController.text,
-                    firstNameController.text,
-                    lastNameController.text),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    Notify notify = snapshot.data;
+  _showDialog(SignUpBloc signUpBloc) async {
+    showDialogLoading(context, 'Đăng ký');
+    final signUpResult = await signUpBloc.doSignUp(emailController.text,
+        passController.text,
+        firstNameController.text,
+        lastNameController.text);
+    Navigator.pop(context, true);
 
-                    return Column(
-                      children: <Widget>[
-                        Text(notify.message, style: TextStyle(
-                            color: darkMode ? kTextDarkColor : kTextColor),),
-                        SizedBox(height: 10),
-                        FlatButton(
-                          child: Text('OK', style: TextStyle(color: Colors.blue, fontSize: 18)),
-                          onPressed: () {
-                            if (notify.code == 201) {
-                              userSignUp.email = emailController.text;
-                              userSignUp.pass = passController.text;
-
-                              Navigator.of(context).pop('OK');
-                            } else {
-                              Navigator.of(context).pop();
-                            }
-                          },
-                        ),
-                      ],
-                    );
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    ).then((value) {
-      if (value?.compareTo('OK') == 0) {
-        Navigator.of(context).pop('OK');
-      }
-    });
+    if (signUpResult.code == 400) {
+      userSignUp = UserStore(emailController.text, passController.text);
+//      userSignUp.email = emailController.text;
+//      userSignUp.pass = passController.text;
+      var press = () {
+        Navigator.of(context).pop('back');
+      };
+      showDialogNotification(context, 'Đăng ký', signUpResult, press: press);
+    } else {
+      showDialogNotification(context, 'Đăng ký', signUpResult);
+    }
   }
 }
 

@@ -26,14 +26,16 @@ class SignUpModel{
       if (response.statusCode == 201) {
         print('SignUp successfully');
         return Notify(response.statusCode, "Đăng ký thành công!");
+      }else if(response.statusCode == 400){
+//        String mess = "";
+//        var list = json.decode(response.body)['error']['message'];
+//        for (String s in list) {
+//          mess += s + "\n";
+//        }
+        return Notify(response.statusCode, json.decode(response.body)['error']['message']);
+      }else{
+        return Notify(response.statusCode, "Server hiện đang lỗi :(");
       }
-
-      String mess = "";
-      var list = json.decode(response.body)['error']['descriptions'];
-      for (String s in list) {
-        mess += s + "\n";
-      }
-      return Notify(response.statusCode, mess);
     } catch (e) {
       print('error: $e');
       return Notify(-1, 'Có lỗi xảy ra');

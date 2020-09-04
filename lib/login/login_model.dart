@@ -30,7 +30,7 @@ class LoginModel{
       } else if (response.statusCode == 400) {
         return Notify(response.statusCode, "Email hoặc mật khẩu không đúng");
       } else {
-        return Notify(-1, responseJson['error']['descriptions']);
+        return Notify(response.statusCode, "Server hiện đang lỗi :(");
       }
     } catch (e) {
       print('error: $e');
