@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:coding_with_itmc/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -19,41 +20,41 @@ class CourseCard extends StatelessWidget {
     return GestureDetector(
       onTap: tap,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
         child: Column(
           children: <Widget>[
             Container(
-              width: 220,
+              width: 200,
               height: 100,
               color: kBackground,
               child: Center(child: Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25, fontFamily: 'Oswald'), )),
             ),
             Container(
-              width: 220,
+              width: 200,
               height: 150,
-              color: Colors.white,
+              color: darkMode ? kCardDarkColor : Colors.white,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(description, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: 'Oswald'),),
+                    Text(description, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: 'Oswald', color: darkMode?kTextDarkColor:kTextColor),),
                     Column(
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            Icon(Icons.add_to_queue, size: 18,),
+                            Icon(Icons.add_to_queue, size: 18,color: darkMode?kTextDarkColor:kTextColor),
                             SizedBox(width: 10),
-                            Text('$numLessons bài học', style: TextStyle(fontFamily: 'Oswald'),),
+                            Text('$numLessons bài học', style: TextStyle(fontFamily: 'Oswald', color: darkMode?kTextDarkColor:kTextColor),),
                           ],
                         ),
                         SizedBox(height: 5),
                         Row(
                           children: <Widget>[
-                            Icon(Icons.person_outline, size: 18,),
+                            Icon(Icons.person_outline, size: 18,color: darkMode?kTextDarkColor:kTextColor),
                             SizedBox(width: 10),
-                            Text('$numStudents học viên', style: TextStyle(fontFamily: 'Oswald'),),
+                            Text('$numStudents học viên', style: TextStyle(fontFamily: 'Oswald', color: darkMode?kTextDarkColor:kTextColor),),
                           ],
                         ),
                         SizedBox(height: 5),

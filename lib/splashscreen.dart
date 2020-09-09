@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:coding_with_itmc/config.dart';
-import 'package:coding_with_itmc/home/ui.dart';
+import 'package:coding_with_itmc/home/home_ui.dart';
 import 'package:coding_with_itmc/login/login_model.dart';
 import 'package:coding_with_itmc/login/login_ui.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +26,9 @@ class _SplashState extends State<Splash> {
   }
 
   _checkInternetConnection() async {
-    print('dm');
+    print('check internet connection');
     try {
-      final result = await InternetAddress.lookup('google.com');
+      final result = await InternetAddress.lookup('https://google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         print('connected');
       }
@@ -43,27 +43,29 @@ class _SplashState extends State<Splash> {
     await SharedPreferencesManager.getUserStore();
 
     if (userLogin.isLogged) {
-      LoginModel().requestLogin(userLogin.email, userLogin.pass).then((value) {
-        if (value.code == 200) {
-          Navigator.of(context).pop();
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-              (route) => false);
-        } else {
-          Navigator.of(context).pop();
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => LoginPage()),
-                  (route) => false);
-        }
-      });
+      final loginResult =
+          await LoginModel().requestLogin(userLogin.email, userLogin.pass);
+      print(loginResult.code);
+      print(loginResult.message);
+      if (loginResult.code == 200) {
+        Navigator.of(context).pop();
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+            (route) => false);
+      } else {
+        Navigator.of(context).pop();
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LoginPage()),
+            (route) => false);
+      }
     } else {
       Navigator.of(context).pop();
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => LoginPage()),
-              (route) => false);
+          (route) => false);
     }
   }
 

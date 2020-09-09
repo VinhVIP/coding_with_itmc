@@ -42,7 +42,7 @@ class User {
     if (dateOfBirth != null) {
       dateOfBirth = dateOfBirth.substring(0, 10);
       List<String> s = dateOfBirth.split("-");
-      dateOfBirth = s[1] + "/" + s[2] + "/" + s[0];
+      dateOfBirth = s[2] + "/" + s[1] + "/" + s[0];
     }
   }
 }

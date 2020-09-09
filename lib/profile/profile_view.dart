@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:coding_with_itmc/components/appbar.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -37,10 +39,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    _firstNameController = TextEditingController(text: user.firstName);
-    _lastNameController = TextEditingController(text: user.lastName);
-    _studentIDController = TextEditingController(text: user.studentID);
-    _schoolController = TextEditingController(text: user.school);
+    _firstNameController = TextEditingController();
+    _lastNameController = TextEditingController();
+    _studentIDController = TextEditingController();
+    _schoolController = TextEditingController();
+
+    _firstNameController.text = user.firstName;
+    _lastNameController.text = user.lastName;
+    _studentIDController.text = user.studentID;
+    _schoolController.text = user.school;
 
     final provider = Provider.of<ProfileBloc>(context, listen: false);
 
@@ -84,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: darkMode ? kBackgroundDarkColor : kBackgroundColor,
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.only(left: 10, right: 10, bottom: 30),
+          padding: EdgeInsets.only(left: 5, right: 5, bottom: 5),
           child: Consumer<ProfileBloc>(
             builder: (context, model, child) {
               return model.viewProfile
@@ -131,6 +138,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
+                _firstNameController.text = user.firstName;
+                _lastNameController.text = user.lastName;
+                _studentIDController.text = user.studentID;
+                _schoolController.text = user.school;
+                profileBloc.radioGenderValue = user.gender;
+                profileBloc.dateOfBirth = user.dateOfBirth;
+
                 profileBloc.viewProfile = true;
               },
             );
@@ -148,135 +162,142 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SizedBox(height: 20),
         _buildCircleAvatar(),
         SizedBox(height: 10),
-        _buildFullName(),
+        _buildFullNameViewer(),
         SizedBox(height: 5),
         _buildEmail(),
         SizedBox(height: 30),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              width: 150,
-              child: Column(
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+          decoration: BoxDecoration(
+            color: darkMode ? kCardDarkColor : Colors.greenAccent,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: 150,
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 2),
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.blue,
+                          size: 25,
+                        ),
+                        SizedBox(width: 7),
+                        Text(
+                          'Giới tính :',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: 'Oswald',
+                              color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.blue,
+                          size: 25,
+                        ),
+                        SizedBox(width: 7),
+                        Text(
+                          'Ngày sinh :',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: 'Oswald',
+                              color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.blue,
+                          size: 25,
+                        ),
+                        SizedBox(width: 7),
+                        Text(
+                          'Mã sinh viên :',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: 'Oswald',
+                              color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.blue,
+                          size: 25,
+                        ),
+                        SizedBox(width: 7),
+                        Text(
+                          'Trường học :',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: 'Oswald',
+                              color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(height: 2),
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.chevron_right,
-                        color: Colors.blue,
-                        size: 25,
-                      ),
-                      SizedBox(width: 7),
-                      Text(
-                        'Giới tính :',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Oswald',
-                            color: Colors.blue),
-                      ),
-                    ],
-                  ),
+                  Text(
+                      user.gender == 0
+                          ? 'Nam'
+                          : (user.gender == 1 ? 'Nữ' : 'Không rõ'),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Oswald',
+                        color: darkMode ? kTextDarkColor : kTextColor,
+                      )),
                   SizedBox(height: 20),
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.chevron_right,
-                        color: Colors.blue,
-                        size: 25,
-                      ),
-                      SizedBox(width: 7),
-                      Text(
-                        'Ngày sinh :',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Oswald',
-                            color: Colors.blue),
-                      ),
-                    ],
-                  ),
+                  Text('${user.dateOfBirth ?? 'Chưa cập nhật'}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Oswald',
+                        color: darkMode ? kTextDarkColor : kTextColor,
+                      )),
                   SizedBox(height: 20),
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.chevron_right,
-                        color: Colors.blue,
-                        size: 25,
-                      ),
-                      SizedBox(width: 7),
-                      Text(
-                        'Mã sinh viên :',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Oswald',
-                            color: Colors.blue),
-                      ),
-                    ],
-                  ),
+                  Text('${user.studentID ?? 'Chưa cập nhật'}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Oswald',
+                        color: darkMode ? kTextDarkColor : kTextColor,
+                      )),
                   SizedBox(height: 20),
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.chevron_right,
-                        color: Colors.blue,
-                        size: 25,
+                  Container(
+                    width: MediaQuery.of(context).size.width - 170,
+                    child: Text(
+                      '${user.school ?? 'Chưa cập nhật'}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Oswald',
+                        color: darkMode ? kTextDarkColor : kTextColor,
                       ),
-                      SizedBox(width: 7),
-                      Text(
-                        'Trường học :',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Oswald',
-                            color: Colors.blue),
-                      ),
-                    ],
+                      overflow: TextOverflow.fade,
+                    ),
                   ),
                 ],
               ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 2),
-                Text(
-                    user.gender == 0
-                        ? 'Nam'
-                        : (user.gender == 1 ? 'Nữ' : 'Không rõ'),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'Oswald',
-                      color: darkMode ? kTextDarkColor : kTextColor,
-                    )),
-                SizedBox(height: 20),
-                Text('${user.dateOfBirth ?? 'Chưa cập nhật'}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'Oswald',
-                      color: darkMode ? kTextDarkColor : kTextColor,
-                    )),
-                SizedBox(height: 20),
-                Text('${user.studentID ?? 'Chưa cập nhật'}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'Oswald',
-                      color: darkMode ? kTextDarkColor : kTextColor,
-                    )),
-                SizedBox(height: 20),
-                Container(
-                  width: MediaQuery.of(context).size.width - 170,
-                  child: Text(
-                    '${user.school ?? 'Chưa cập nhật'}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'Oswald',
-                      color: darkMode ? kTextDarkColor : kTextColor,
-                    ),
-                    overflow: TextOverflow.fade,
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -294,7 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           SizedBox(height: 20),
-          _buildCircleAvatar(),
+          _buildCircleAvatarPicker(),
           SizedBox(height: 10),
           _buildFullName(),
           SizedBox(height: 5),
@@ -330,14 +351,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _showDialog(ProfileBloc profileBloc) async {
-    showDialogLoading(context, 'Cập nhật');
+    MyDialog().showDialogLoading(context, 'Cập nhật');
 
     _firstNameController.text = _firstNameController.text.trim();
     _lastNameController.text = _lastNameController.text.trim();
     _studentIDController.text =
         _studentIDController.text.replaceAll(RegExp(' +'), '').trim();
     _schoolController.text =
-        _schoolController.text.replaceAll(RegExp('  '), ' ').trim();
+        _schoolController.text.replaceAll(RegExp(' +'), ' ').trim();
+    List<String> date = profileBloc.dateOfBirth.split('/');
+    String dateOfBirth = date[2] + '-' + date[1] + '-' + date[0];
 
     final updateResult = await ProfileModel().requestUpdateProfile(
         _firstNameController.text,
@@ -345,11 +368,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         profileBloc.radioGenderValue == 0
             ? 'male'
             : (profileBloc.radioGenderValue == 1 ? 'female' : 'other'),
-        profileBloc.dateOfBirth,
+        dateOfBirth,
         _studentIDController.text,
         _schoolController.text,
         'http://icon.gg');
-    Navigator.pop(context, true);
+
+    if (!MyDialog().isShowingDialogLoading) {
+      Navigator.pop(context, true);
+    }
+
+    print(updateResult.code);
 
     if (updateResult.code == 200) {
       user = new User.copy(
@@ -365,28 +393,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Function press = () {
         Navigator.pop(context, true);
         profileBloc.viewProfile = true;
-        print('view');
+        print('view profile');
       };
-      showDialogNotification(context, 'Cập nhật', updateResult, press: press);
+      MyDialog().showDialogNotification(context, 'Cập nhật', updateResult, press: press);
     } else {
-      showDialogNotification(context, 'Cập nhật', updateResult);
+      MyDialog().showDialogNotification(context, 'Cập nhật', updateResult);
     }
   }
 
   _buildCircleAvatar() {
     return Container(
-      width: 150.0,
-      height: 150.0,
-      decoration: new BoxDecoration(
-        shape: BoxShape.circle,
-        image: new DecorationImage(
-          fit: BoxFit.fill,
-          image: AssetImage(
-            'assets/images/avatar.jpg',
+      width: 160,
+      height: 160,
+      child: Stack(
+        children: <Widget>[
+          Container(
+            width: 150.0,
+            height: 150.0,
+            decoration: new BoxDecoration(
+              shape: BoxShape.circle,
+              image: new DecorationImage(
+                fit: BoxFit.fill,
+                image: AssetImage(
+                  'assets/images/avatar.jpg',
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
+  }
+
+  _buildCircleAvatarPicker() {
+    return Container(
+      width: 160,
+      height: 160,
+      child: Stack(
+        children: <Widget>[
+          Container(
+            width: 150.0,
+            height: 150.0,
+            decoration: new BoxDecoration(
+              shape: BoxShape.circle,
+              image: new DecorationImage(
+                fit: BoxFit.fill,
+                image: _imageFile != null ? FileImage(_imageFile) : AssetImage(
+                  'assets/images/avatar.jpg',
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: IconButton(
+              icon: Icon(Icons.camera_alt, size: 25, color: Colors.indigoAccent,),
+              onPressed: () async {
+                await _pickImageFromGallery();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  File _imageFile;
+  final _picker = ImagePicker();
+
+  Future<Null> _pickImageFromGallery() async {
+    final PickedFile pickedFile = await _picker.getImage(source: ImageSource.gallery);
+    setState(() {
+      _imageFile = File(pickedFile.path);
+    });
   }
 
   _buildFullName() {
@@ -403,6 +482,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  _buildFullNameViewer() {
+    return Center(
+      child: Text(
+        '${user.firstName} ${user.lastName}',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 19,
+          color: darkMode ? kTextDarkColor : kTextColor,
+          fontFamily: 'Oswald',
+        ),
       ),
     );
   }

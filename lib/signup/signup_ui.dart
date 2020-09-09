@@ -238,12 +238,15 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   }
 
   _showDialog(SignUpBloc signUpBloc) async {
-    showDialogLoading(context, 'Đăng ký');
+    MyDialog().showDialogLoading(context, 'Đăng ký');
     final signUpResult = await signUpBloc.doSignUp(emailController.text,
         passController.text,
         firstNameController.text,
         lastNameController.text);
-    Navigator.pop(context, true);
+
+    if (!MyDialog().isShowingDialogLoading) {
+      Navigator.pop(context, true);
+    }
 
     if (signUpResult.code == 400) {
       userSignUp = UserStore(emailController.text, passController.text);
@@ -252,9 +255,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       var press = () {
         Navigator.of(context).pop('back');
       };
-      showDialogNotification(context, 'Đăng ký', signUpResult, press: press);
+      MyDialog().showDialogNotification(context, 'Đăng ký', signUpResult, press: press);
     } else {
-      showDialogNotification(context, 'Đăng ký', signUpResult);
+      MyDialog().showDialogNotification(context, 'Đăng ký', signUpResult);
     }
   }
 }

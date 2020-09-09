@@ -2,7 +2,7 @@ import 'package:coding_with_itmc/components/appbar.dart';
 import 'package:coding_with_itmc/components/dialog.dart';
 import 'package:coding_with_itmc/components/rounded_button.dart';
 import 'package:coding_with_itmc/components/rounded_text_field.dart';
-import 'package:coding_with_itmc/home/ui.dart';
+import 'package:coding_with_itmc/home/home_ui.dart';
 import 'package:coding_with_itmc/lib/shared_preference.dart';
 import 'package:coding_with_itmc/login/login_bloc.dart';
 import 'package:coding_with_itmc/signup/signup_ui.dart';
@@ -201,10 +201,15 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   _showDialog(LoginBloc loginBloc) async {
-    showDialogLoading(context, 'Đăng nhập');
+    MyDialog().showDialogLoading(context, 'Đăng nhập');
+
     final loginResult = await loginBloc.doLogin(
         emailController.text.trim(), passController.text);
-    Navigator.pop(context, true);
+
+    if (!MyDialog().isShowingDialogLoading) {
+      Navigator.pop(context, true);
+    }
+
     print(loginResult.code);
 
     if (loginResult.code == 200) {
@@ -216,7 +221,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       }
       _goToHomePage();
     } else {
-      showDialogNotification(context, 'Đăng nhập', loginResult);
+      MyDialog().showDialogNotification(context, 'Đăng nhập', loginResult);
     }
   }
 
@@ -258,9 +263,8 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   _goToHomePage() {
-    Navigator.of(context).pop();
+//    Navigator.of(context).pop();
     Navigator.pushAndRemoveUntil(context,
         MaterialPageRoute(builder: (context) => HomePage()), (route) => false);
   }
-
 }

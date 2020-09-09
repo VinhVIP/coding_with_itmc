@@ -16,6 +16,8 @@ class SharedPreferencesManager {
 
   static saveUserStore(String email, String pass) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    email = email?.trim();
+    pass = pass?.trim();
 
     userStore.email = email;
     userStore.pass = pass;
@@ -34,6 +36,9 @@ class SharedPreferencesManager {
 
   static saveUserLogged(bool isLogged, String email, String pass) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    email = email?.trim();
+    pass = pass?.trim();
 
     userLogin.isLogged = isLogged;
     userLogin.email = email;

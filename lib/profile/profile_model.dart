@@ -17,7 +17,7 @@ class ProfileModel{
       String school,
       String gravatar) async {
     try {
-      final http.Response response = await http.post(
+      final http.Response response = await http.put(
         urlUserProfile,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -35,6 +35,8 @@ class ProfileModel{
         }),
       );
 
+      print(response.statusCode);
+
       if (response.statusCode == 200) {
         user.convert(json.decode(response.body)['data']);
         print('Updated successfully');
@@ -45,11 +47,12 @@ class ProfileModel{
         for (String s in list) {
           mess += s + "\n";
         }
-        return Notify(response.statusCode, mess);
+
+        return Notify(response.statusCode, json.decode(response.body)['error']['message']);
       } else if (response.statusCode == 401) {
         return Notify(response.statusCode, 'Unauthorized');
       } else {
-        return Notify(response.statusCode, 'Có lỗi xảy ra');
+        return Notify(response.statusCode, 'Server hiện đang bị lỗi :(');
       }
     } catch (e) {
       print('error: $e');

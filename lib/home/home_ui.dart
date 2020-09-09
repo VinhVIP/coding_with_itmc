@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../config.dart';
 
@@ -60,7 +61,7 @@ class HomePageState extends State<HomePage> {
               child: Text(
                 'Nhập môn lập trình',
                 style: TextStyle(
-                    color: Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
+                    color: darkMode ? Colors.indigoAccent : Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
               ),
             ),
             Container(
@@ -74,7 +75,7 @@ class HomePageState extends State<HomePage> {
               child: Text(
                 'Lập trình Web',
                 style: TextStyle(
-                    color: Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
+                    color: darkMode ? Colors.indigoAccent : Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
               ),
             ),
             Container(
@@ -88,7 +89,7 @@ class HomePageState extends State<HomePage> {
               child: Text(
                 'Lập trình Mobile',
                 style: TextStyle(
-                    color: Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
+                    color: darkMode ? Colors.indigoAccent : Colors.indigo, fontSize: 22, fontFamily: 'Oswald'),
               ),
             ),
             Container(
@@ -205,6 +206,36 @@ class HomePageState extends State<HomePage> {
           ),
         ),
         InkWell(
+          onTap: (){
+            print('fanpage itmc');
+            _launchURL("https://www.facebook.com/it.multimedia.club");
+          },
+          child: Container(
+            height: 40,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                children: <Widget>[
+                  Image.asset('assets/images/icon_fb.png', width: 23, height: 23,),
+                  SizedBox(width: 15),
+                  Text(
+                    'Fanpage CLB iTMC',
+                    style: TextStyle(
+                      fontFamily: 'Oswald',
+                      fontSize: 17,
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        InkWell(
+          onTap: (){
+            print('link');
+            _launchURL("mailto:vinhvipvl@gmail.com?subject=Alo&body=Hihi");
+          },
           child: Container(
             height: 40,
             child: Padding(
@@ -212,9 +243,31 @@ class HomePageState extends State<HomePage> {
               child: Row(
                 children: <Widget>[
                   Icon(
-                    Icons.timer_off,
+                    Icons.email,
                     color: kPrimaryColor,
                   ),
+                  SizedBox(width: 15),
+                  Text(
+                    'Liên hệ',
+                    style: TextStyle(
+                      fontFamily: 'Oswald',
+                      fontSize: 17,
+                      color: darkMode ? kTextDarkColor : kTextColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        InkWell(
+          child: Container(
+            height: 40,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                children: <Widget>[
+                  Image.asset('assets/images/icon_logout.png', width: 22, height: 22,),
                   SizedBox(width: 15),
                   Text(
                     'Đăng xuất',
@@ -236,7 +289,7 @@ class HomePageState extends State<HomePage> {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => LoginPage()),
-                (route) => false);
+                    (route) => false);
           },
         ),
       ],
@@ -253,86 +306,14 @@ class HomePageState extends State<HomePage> {
       ),
     );
   }
-}
 
-//class ListCategories extends StatelessWidget {
-//
-//  ListCategories({Key key, }) : super(key: key);
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return ListView.builder(
-//        scrollDirection: Axis.horizontal,
-//        itemCount: listCategories.length,
-//        itemBuilder: (BuildContext context, int index) {
-//          return _cardItem(context, index);
-//        });
-//  }
-//
-//  Widget _cardItem(BuildContext context, int index) {
-//    return Padding(
-//      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-//      child: IntroCard(
-//        listCategories[index].backgroundcolor,
-//        listCategories[index].title,
-//        listCategories[index].description,
-//        listCategories[index].numPosts,
-//        listCategories[index].numStudents,
-//        listCategories[index].stars,
-//        () => _moveToCategory(context, index),
-//      ),
-//    );
-//  }
-//
-////  Widget _rowItem(BuildContext context, int index) {
-////    var size = MediaQuery.of(context).size.width;
-////
-////    return Card(
-//////      color: darkMode ? kCardDarkColor : kCardColor,
-////      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-////      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-////      elevation: 5,
-////      child: InkWell(
-////        borderRadius: BorderRadius.circular(25),
-//////        splashColor: darkMode ? kCardHighlightDarkColor : kCardHighlightColor,
-////        onTap: () {
-////          _moveToCategory(context, index);
-////        },
-////        child: ListTile(
-////          leading: SizedBox(
-////            width: 50,
-////            height: 50,
-////            child: CircleAvatar(
-////              child: listCategories[index].icon,
-////              backgroundColor: Colors.blue[50],
-////            ),
-////          ),
-////          title: Text(
-////            listCategories[index].title,
-////            style: TextStyle(
-////                color: darkMode ? kTextDarkColor : kTextColor,
-////                fontSize: 18,
-////                fontFamily: 'Oswald'),
-////          ),
-////          subtitle: Text(
-////            listCategories[index].numPosts.toString() + " bài học",
-////            style: TextStyle(
-////                color: darkMode ? kTextSecondaryDarkColor : kTextSecondaryColor,
-////                fontSize: 14,
-////                fontFamily: 'Oswald',
-////                fontWeight: FontWeight.w200),
-////          ),
-////        ),
-////      ),
-////    );
-////  }
-//
-//  _moveToCategory(BuildContext context, int index) {
-//    Navigator.push(
-//      context,
-//      MaterialPageRoute(
-//        builder: (context) => ListPostsPage(index),
-//      ),
-//    );
-//  }
-//}
+  _launchURL(String url) async {
+    if(await canLaunch(url)){
+      await launch(url);
+    }else{
+      print('no no');
+    }
+
+  }
+
+}
